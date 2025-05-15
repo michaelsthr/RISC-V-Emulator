@@ -98,7 +98,6 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarktheme.load_stylesheet())
     window = MainWindow()
-    window.setMaximumSize(1000, 1000)
     window.show()
 
     window.import_file("example_files/instructions.txt")
