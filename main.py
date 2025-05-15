@@ -17,6 +17,7 @@ from layout.register import Register
 from loguru import logger
 
 from file_loader import FileLoader
+from cpu import CPU
 
 
 # Subclass QMainWindow to customize your application's main window
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("RISC-V-Emulator")
         # self.loader = Loader(self)
         self.file_loader = FileLoader(self)
+        self.cpu = CPU()
         self.input_arry = []
         self._init_ui()
         self._connect_ui_signals()
@@ -37,7 +39,6 @@ class MainWindow(QMainWindow):
         self.run_button = QPushButton("Start")
         self.next_button = QPushButton("Next")
         self.load_button = QPushButton("Load File")
-        self.back_button = QPushButton("Back")
 
         self.editor = Editor()
         self.register = Register(size=32)
@@ -45,34 +46,19 @@ class MainWindow(QMainWindow):
         button_menu.addWidget(self.run_button)
         button_menu.addWidget(self.next_button)
         button_menu.addWidget(self.load_button)
-        button_menu.addWidget(self.back_button)
-
-        info_button = QPushButton("More Informations")
-        placeholder = QPlainTextEdit()
 
         main_layout.addLayout(button_menu, 0, 0)
         main_layout.addWidget(self.editor, 1, 0)
         main_layout.addWidget(self.register, 1, 1)
-        main_layout.addWidget(info_button, 0, 1)
 
         main_widget = QWidget()
         main_widget.setLayout(main_layout)
         self.setCentralWidget(main_widget)
-        self.i = 0
-
-        # self.import_standard_file(filename="example_files/instructions.txt")
-        block = self.editor.get_block()
-        print(block)
 
     def _connect_ui_signals(self):
         self.load_button.clicked.connect(self.import_files)
         self.run_button.clicked.connect(self.run)
         self.next_button.clicked.connect(self.move)
-        self.back_button.clicked.connect(self.back)
-
-    def back(self):
-        self.i -= 1
-        self.editor.move_cursor(self.i - 1)
 
     def move(self):
         self.global_index += 1
@@ -93,16 +79,10 @@ class MainWindow(QMainWindow):
 
     def run_instruction(self, instruction: str):
         logger.info(f"Run instruction: {instruction}")
-
-        if not self.check_pattern(instruction):
-            raise Exception("Invalid pattern for the operation!")
-        
-    def check_pattern(self, instruction: str) -> bool:
-        return True
+        self.cpu.run_instruction(instruction)
 
     def import_files(self):
         for line in self.file_loader.import_from_dialog():
-            print("LINE: ", line)
             self.editor.append_html(line)
 
     def import_file(self, filename: str):
@@ -121,6 +101,6 @@ if __name__ == "__main__":
     window.setMaximumSize(1000, 1000)
     window.show()
 
-    # window.register.set_register_value(22, "Michi ist echt cool")
+    window.import_file("example_files/instructions.txt")
 
     app.exec()
