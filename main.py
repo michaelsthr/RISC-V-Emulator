@@ -1,23 +1,16 @@
 import sys
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QTextCursor, QFont
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
     QPushButton,
     QHBoxLayout,
-    QVBoxLayout,
     QWidget,
-    QLineEdit,
     QPlainTextEdit,
     QGridLayout,
     QFileDialog,
-    QListWidget,
 )
 import qdarktheme
 from pathlib import Path
-
-import re
 
 from layout.editor import Editor
 
@@ -62,7 +55,6 @@ class MainWindow(QMainWindow):
         self.i = 0
 
         self.load_file(filename="example_files/instructions.txt")
-        instructions = self.editor.get_text()
         block = self.editor.get_block()
         print(block)
 
