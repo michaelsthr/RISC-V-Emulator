@@ -57,3 +57,10 @@ class Editor(QPlainTextEdit):
 
     def get_block(self) -> str:
         return self.textCursor().block().text()
+    
+    def get_line_numnber(self) -> int:
+        return self.textCursor().blockNumber()
+    
+    def set_read_mode(self, mode: bool):
+        self.setReadOnly(mode)
+        logger.info(f"Read mode set to: {mode}")
