@@ -16,6 +16,8 @@ from layout.editor import Editor
 from layout.register import Register
 from loguru import logger
 
+from file_loader import FileLoader
+
 
 # Subclass QMainWindow to customize your application's main window
 class MainWindow(QMainWindow):
@@ -23,6 +25,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("RISC-V-Emulator")
         # self.loader = Loader(self)
+        self.file_loader = FileLoader(self)
         self.input_arry = []
         self._init_ui()
         self._connect_ui_signals()
@@ -57,12 +60,12 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(main_widget)
         self.i = 0
 
-        self.load_file(filename="example_files/instructions.txt")
+        # self.import_standard_file(filename="example_files/instructions.txt")
         block = self.editor.get_block()
         print(block)
 
     def _connect_ui_signals(self):
-        self.load_button.clicked.connect(self.load_files)
+        self.load_button.clicked.connect(self.import_files)
         self.run_button.clicked.connect(self.run)
         self.next_button.clicked.connect(self.move)
         self.back_button.clicked.connect(self.back)
@@ -97,36 +100,14 @@ class MainWindow(QMainWindow):
     def check_pattern(self, instruction: str) -> bool:
         return True
 
-    def load_files(self):
-        print("open_files")
-        dialog = QFileDialog(self)
-        dialog.setDirectory("/Users/michi/Projects/RISC-V-Emulator")
-        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        dialog.setViewMode(QFileDialog.ViewMode.List)
-        if dialog.exec():
-            # TODO: Only one file
-            filenames = dialog.selectedFiles()
-            if filenames:
-                print(filenames)
-                files = [str(Path(filename)) for filename in filenames]
-                print(files)
-                for f in filenames:
-                    self.load_file(str(f))
-                return filenames
+    def import_files(self):
+        for line in self.file_loader.import_from_dialog():
+            print("LINE: ", line)
+            self.editor.append_html(line)
 
-    def update(self):
-        for a in self.input_arry:
-            self.editor.append_html(a)
-
-    def load_file(self, filename):
-        with open(filename) as filename:
-            lines = filename.readlines()
-
-        for line in lines:
-            self.input_arry.append(line)
-        self.update()
-
-
+    def import_file(self, filename: str):
+        for line in self.file_loader.read_file(filename):
+            self.editor.append_html(line)
 
 def __init_logger():
     logger.remove()  # Remove default logger configuration
