@@ -1,7 +1,7 @@
 from loguru import logger
 
 
-class Register:
+class Registers:
     def __init__(self, size: int):
         self.size = size
         self.registers: list = ["0" * self.size] * self.size
@@ -39,7 +39,7 @@ class Register:
 
 
 if __name__ == "__main__":
-    register = Register(size=32)
+    register = Registers(size=32)
     register.set_register(2, "000000000000000")
     register.set_register(49, "0" * 32)
     register.set_register(-1, "0" * 32)
