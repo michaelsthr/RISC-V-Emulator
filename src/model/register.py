@@ -1,5 +1,5 @@
 from loguru import logger
-from bits import Bits
+from src.model.bits import Bits
 
 class Registers:
     def __init__(self, size: int):

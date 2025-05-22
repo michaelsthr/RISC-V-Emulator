@@ -12,12 +12,12 @@ from PySide6.QtWidgets import (
 import qdarktheme
 from pathlib import Path
 
-from layout.editor import Editor
-from layout.register import Register
+from src.view.editor import Editor
+from src.view.register import Register
 from loguru import logger
 
-from file_loader import FileLoader
-from cpu import CPU
+from src.view.file_loader import FileLoader
+from src.model.cpu import CPU
 
 
 # Subclass QMainWindow to customize your application's main window
