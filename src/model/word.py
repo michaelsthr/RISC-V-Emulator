@@ -11,19 +11,25 @@ class Word:
 
     def __str__(self) -> str:
         step = 8
-        return " ".join(self.base2[i : i + step] for i in range(0, len(self.base2), step))
+        return " ".join(
+            self.base2[i : i + step] for i in range(0, len(self.base2), step)
+        )
 
     def __add__(self, word: "Word") -> "Word":
         sum_dez = self.base10 + word.base10
         return Word(dez=sum_dez)
-    
+
     def __sub__(self, word: "Word") -> "Word":
         sub_dez = self.base10 - word.base10
         return Word(dez=sub_dez)
-    
+
     def __and__(self, word: "Word") -> "Word":
         and_dez = self.base10 & word.base10
         return Word(dez=and_dez)
+
+    def __or__(self, word: "Word") -> "Word":
+        or_dez = self.base10 | word.base10
+        return Word(dez=or_dez)
 
     def set_bit_at_index(self, idx: int, value: str) -> str:
         self.bits[idx] = value

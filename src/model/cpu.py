@@ -74,8 +74,17 @@ class CPU:
             f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
         )
 
-    def _or(self):
-        logger.info("Run or")
+    def _or(self, rd: str, rs1: str, rs2: str):
+        logger.info(f"Run or with rd={rd}, rs1={rs1}, rs2={rs2}")
+        rd = self.get_register_index(rd)
+        rs1 = self.get_register_index(rs1)
+        rs2 = self.get_register_index(rs2)
+
+        self.registers[rd] = self.registers[rs1] | self.registers[rs2]
+
+        logger.info(
+            f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
+        )
 
     def _xor(self):
         logger.info("Run xor")
