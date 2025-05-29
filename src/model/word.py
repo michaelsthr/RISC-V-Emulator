@@ -16,24 +16,24 @@ class Word:
         )
 
     def __add__(self, word: "Word") -> "Word":
-        sum_dez = self.base10 + word.base10
-        return Word(dez=sum_dez)
+        res_base10 = self.base10 + word.base10
+        return Word(dez=res_base10)
 
     def __sub__(self, word: "Word") -> "Word":
-        sub_dez = self.base10 - word.base10
-        return Word(dez=sub_dez)
+        res_base10 = self.base10 - word.base10
+        return Word(dez=res_base10)
 
     def __and__(self, word: "Word") -> "Word":
-        and_dez = self.base10 & word.base10
-        return Word(dez=and_dez)
+        res_base10 = self.base10 & word.base10
+        return Word(dez=res_base10)
 
     def __or__(self, word: "Word") -> "Word":
-        or_dez = self.base10 | word.base10
-        return Word(dez=or_dez)
+        res_base10 = self.base10 | word.base10
+        return Word(dez=res_base10)
 
     def __xor__(self, word: "Word") -> "Word":
-        xor_dez = self.base10 ^ word.base10
-        return Word(dez=xor_dez)
+        res_base10 = self.base10 ^ word.base10
+        return Word(dez=res_base10)
 
     def set_bit_at_index(self, idx: int, value: str) -> str:
         self.bits[idx] = value
