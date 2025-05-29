@@ -38,9 +38,6 @@ class CPU:
         except ValueError:
             raise ValueError(f"You can't get imm with following value: {imm}")
 
-    def _mov(self, x1, x2, x3):
-        logger.info(f"Run mov with args: {x1}, {x2}, {x3}")
-
     def _add(self, rd: str, rs1: str, rs2: str):
         logger.info(f"Run add with rd={rd}, rs1={rs1}, rs2={rs2}")
         rd = self.get_register_index(rd)
