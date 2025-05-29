@@ -98,6 +98,36 @@ class CPU:
             f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
         )
 
+    def _addi(self, rd: str, rs1: str, imm: str):
+        logger.info(f"Run addi with rd={rd}, rs1={rs1}, imm={imm}")
+        rd = self.get_register_index(rd)
+        rs1 = self.get_register_index(rs1)
+        imm = self.get_imm(imm)
+
+        self.registers[rd] = self.registers[rs1] + Word(imm)
+
+        logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
+
+    def _andi(self, rd: str, rs1: str, imm: str):
+        logger.info(f"Run andi with rd={rd}, rs1={rs1}, imm={imm}")
+        rd = self.get_register_index(rd)
+        rs1 = self.get_register_index(rs1)
+        imm = self.get_imm(imm)
+
+        self.registers[rd] = self.registers[rs1] & Word(imm)
+
+        logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
+
+    def _ori(self, rd: str, rs1: str, imm: str):
+        logger.info(f"Run ori with rd={rd}, rs1={rs1}, imm={imm}")
+        rd = self.get_register_index(rd)
+        rs1 = self.get_register_index(rs1)
+        imm = self.get_imm(imm)
+
+        self.registers[rd] = self.registers[rs1] | Word(imm)
+
+        logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
+
     def _li(self, rd: str, imm: str):
         logger.info(f"Run li with rd={rd}, imm={imm}")
         rd = self.get_register_index(rd)

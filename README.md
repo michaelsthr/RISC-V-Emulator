@@ -5,12 +5,15 @@
 ### Arithmetic
 
 - add
+- addi
 - sub
 
 ### Bitwise Logic
 
 - and
+- andi
 - or
+- ori
 - xor
 
 ### Load Immediate
