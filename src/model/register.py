@@ -1,40 +1,28 @@
 from loguru import logger
-from src.model.bits import Bits
+from .word import Word
+
 
 class Registers:
     def __init__(self, size: int):
         self.size = size
-        self.registers: list[Bits] = [Bits(self.size)] * self.size
+        self._registers: list[Word] = [Word(dez=0)] * self.size
         self.register_präfix = "x"
 
-    def print_registers(self):
-        for idx, register in enumerate(self.registers):
-            print(f"x{idx} \t{register}")
+    def __repr__(self):
+        return f"Registers(registers={self._registers}, size={self.size}, register_präfix={self.register_präfix})"
 
-    def get_register(self, idx: int) -> Bits:
-        try:
-            return self.registers[idx]
-        except Exception as ex:
-            logger.error(f"Failed to get register: {idx}. Exception: {ex}")
+    def __str__(self):
+        return "\n".join([f"x{idx} \t{register}" for idx, register in enumerate(self._registers)])
 
-    def set_register(self, idx: int, bits: Bits):
-        try:
-            self.registers[idx] = bits
-            logger.info(f"Register[{idx}] set to {bits}")
-        except Exception as ex:
-            logger.error(
-                f"Failed to set register: {idx} with value: {bits}. Exception: {ex}"
-            )
+    def __getitem__(self, key: int) -> Word:
+        if key >= self.size or key < 0:
+            logger.error(f"Index {key} out of bounds for registers of size {self.size}")
+            return
+        return self._registers[key]
 
-    def get_registers(self) -> list:
-        return self.registers
+    def __setitem__(self, key: int, value: Word):
+        self._registers[key] = value
 
-
-if __name__ == "__main__":
-    register = Registers(size=32)
-    bits = Bits(32)
-    register.set_register(2, bits)
-    register.print_registers()
-    print("\n\n")
-    bits.set_at_index(4, "1")
-    register.print_registers()
+    @property
+    def registers(self) -> list[Word]:
+        return self._registers
