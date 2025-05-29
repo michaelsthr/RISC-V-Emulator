@@ -20,6 +20,10 @@ class Word:
     def __sub__(self, word: "Word") -> "Word":
         sub_dez = self.base10 - word.base10
         return Word(dez=sub_dez)
+    
+    def __and__(self, word: "Word") -> "Word":
+        and_dez = self.base10 & word.base10
+        return Word(dez=and_dez)
 
     def set_bit_at_index(self, idx: int, value: str) -> str:
         self.bits[idx] = value
