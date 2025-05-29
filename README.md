@@ -11,6 +11,7 @@
 
 - and
 - or
+- xor
 
 ### Load Immediate
 

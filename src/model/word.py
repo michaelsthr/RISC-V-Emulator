@@ -31,6 +31,10 @@ class Word:
         or_dez = self.base10 | word.base10
         return Word(dez=or_dez)
 
+    def __xor__(self, word: "Word") -> "Word":
+        xor_dez = self.base10 ^ word.base10
+        return Word(dez=xor_dez)
+
     def set_bit_at_index(self, idx: int, value: str) -> str:
         self.bits[idx] = value
 
