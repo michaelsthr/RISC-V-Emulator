@@ -13,3 +13,4 @@ INSTRUCTION_REGEX: str = re.compile(
     r"(?:\s*,\s*([x]\d+|\w+))?"  # 3. operand (optional)
     r"\s*(?:#.*)?$"              # comment (otional)
 )
+

@@ -11,11 +11,11 @@ class Assembler:
         self.symbol_table: Dict[str, int] = {}
 
         # {instruction string, adress}
-        self.instructions: Dict[str, int] = {}
+        self.instructions: Dict[List[str], int] = {}
 
     def parse_programm(
         self, programm: List[str]
-    ) -> Tuple[Dict[str, int], Dict[str, int]]:
+    ) -> Tuple[Dict[str, int], Dict[List[str], int]]:
         for idx, line in enumerate(programm):
             if re.match(LABEL_REGEX, line):
                 if line.strip() in self.labels:
@@ -23,14 +23,16 @@ class Assembler:
                 self.labels |= {line.strip(), idx}
                 continue
 
-            elif re.match(INSTRUCTION_REGEX, line):
-                self.instructions |= {line.split("x")[0].strip(), idx}
+            line = line.split("x")[0].strip()  # remove comment
+            match = re.match(INSTRUCTION_REGEX, line)
+            if match:
+                instructions: List[str] = [group for group in match.groups() if group]
+                self.instructions |= {instructions, idx}
                 continue
 
-            else:
-                raise ValueError(
-                    f"Parsing of programm failed in line {idx}: {line}"
-                    f"It should match {LABEL_REGEX} or {INSTRUCTION_REGEX}"
-                )
+            raise ValueError(
+                f"Parsing of programm failed in line {idx}: {line}"
+                f"It should match {LABEL_REGEX} or {INSTRUCTION_REGEX}"
+            )
 
         return self.symbol_table, self.instructions
