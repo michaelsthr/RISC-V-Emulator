@@ -9,6 +9,10 @@ class CPU:
     def __init__(self, registers_size=32):
         self.registers = Registers(size=registers_size)
 
+        # I know, the instruction count is normally in the Register
+        # Fortunately i`m creating only a simulator :)
+        self.pc: int = 0
+
     def run_instruction(self, instruction: str):
         parts = re.findall(r"[a-zA-Z0-9_]+", instruction)
         function: str = parts[0]
@@ -32,6 +36,16 @@ class CPU:
                 f"You can't run instruction with following values: {r}. This is the preferred scheme: 'x1'"
             )
 
+    def get_registers(self) -> Registers:
+        return self.registers
+
+    def get_pc(self) -> int:
+        return self.pc
+
+    def increment_pc(self, amount: int = 1):
+        self.pc += amount
+        logger.info(f"Instruction count set to: {self.pc}")
+
     def get_imm(self, imm: str):
         try:
             return int(imm)
@@ -45,6 +59,7 @@ class CPU:
         rs2 = self.get_register_index(rs2)
 
         self.registers[rd] = self.registers[rs1] + self.registers[rs2]
+        self.increment_pc()
 
         logger.info(
             f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
@@ -57,6 +72,7 @@ class CPU:
         rs2 = self.get_register_index(rs2)
 
         self.registers[rd] = self.registers[rs1] - self.registers[rs2]
+        self.increment_pc()
 
         logger.info(
             f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
@@ -69,6 +85,7 @@ class CPU:
         rs2 = self.get_register_index(rs2)
 
         self.registers[rd] = self.registers[rs1] & self.registers[rs2]
+        self.increment_pc()
 
         logger.info(
             f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
@@ -81,6 +98,7 @@ class CPU:
         rs2 = self.get_register_index(rs2)
 
         self.registers[rd] = self.registers[rs1] | self.registers[rs2]
+        self.increment_pc()
 
         logger.info(
             f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
@@ -93,6 +111,7 @@ class CPU:
         rs2 = self.get_register_index(rs2)
 
         self.registers[rd] = self.registers[rs1] ^ self.registers[rs2]
+        self.increment_pc()
 
         logger.info(
             f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
@@ -105,6 +124,7 @@ class CPU:
         imm = self.get_imm(imm)
 
         self.registers[rd] = self.registers[rs1] + Word(imm)
+        self.increment_pc()
 
         logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
 
@@ -115,6 +135,7 @@ class CPU:
         imm = self.get_imm(imm)
 
         self.registers[rd] = self.registers[rs1] & Word(imm)
+        self.increment_pc()
 
         logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
 
@@ -125,6 +146,7 @@ class CPU:
         imm = self.get_imm(imm)
 
         self.registers[rd] = self.registers[rs1] | Word(imm)
+        self.increment_pc()
 
         logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
 
@@ -133,6 +155,7 @@ class CPU:
         rd = self.get_register_index(rd)
         imm = self.get_imm(imm)
         self.registers[rd] = Word(imm)
+        self.increment_pc()
 
         logger.info(f"Set register x{rd} to: x{rd} = {imm}")
 
