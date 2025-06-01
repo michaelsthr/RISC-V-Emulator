@@ -20,23 +20,24 @@ INSTRUCTION_REGEX: str = re.compile(
 class Assembler:
     def __init__(self):
         # {label, adress}
-        self.symbol_table: Dict[str, int] = {}
 
-        # {instruction string, adress}
-        # Only one adress for each instruction
-        self.instructions: Dict[int, List[str]] = {}
+        # {OriginalLine, Label, Adress}
+        self.symbol_table: Dict[int, Tuple[str, int]] = {}
 
-    def parse_symbol_table(self, programm: List[str]) -> Dict[str, int]:
+        # {OriginalLine, Instruction, Adress}
+        self.instructions: Dict[int, Tuple[List[str], int]] = {}
+
+    def parse_symbol_table(self, programm: List[str]) -> Dict[int, Tuple[str, int]]:
         adr = 0
-        for _, line in enumerate(programm):
+        for idx, line in enumerate(programm):
             line = line.strip()
             if re.match(LABEL_REGEX, line):
                 line = line.removesuffix(":")
-                if line in self.symbol_table:
+                if any(line == label for (label, _) in self.symbol_table.values()):
                     raise ValueError(
                         f"The labels {line} already exists in the symbol_table '{line}:{self.symbol_table.get(line)}'"
                     )
-                self.symbol_table[line] = adr
+                self.symbol_table[idx] = (line, adr)
                 continue
             adr += 1
         return self.symbol_table
@@ -58,12 +59,13 @@ class Assembler:
             instruction: List[str] = [
                 self.symbol_table.get(group, group) for group in match.groups()
             ]
-            self.instructions[adr] = instruction
+            self.instructions[idx] = (instruction, adr)
             adr += 1
         return self.instructions
 
     def parse_programm(
-        self, programm: List[str]
-    ) -> Tuple[Dict[str, int], Dict[int, List[str]]]:
+        self, programm:  Dict[int, str]
+    ) -> Tuple[Dict[int, Tuple[str, int]], Dict[int, Tuple[List[str], int]]]:
         """Returns symbol_table: Dict[str, int] and instructions: Dict[int, List[str]]"""
-        return self.parse_symbol_table(programm), self.parse_instructions(programm)
+        lines = [value for (_, value) in programm.items()]
+        return self.parse_symbol_table(lines), self.parse_instructions(lines)

@@ -19,5 +19,6 @@ if __name__ == "__main__":
     __init_logger()
     controller: Controller = Controller()
     controller.window.open_from_filename("example_files/3_BedingteVerzweigung(beq).txt")
+    controller.start_programm()
 
     app.exec()

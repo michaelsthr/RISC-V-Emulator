@@ -1,3 +1,4 @@
+from pprint import pprint
 from traceback import format_exc
 from typing import Dict, List, Tuple
 from loguru import logger
@@ -20,13 +21,13 @@ class CPU:
         # We increment by one ;)
         self.pc: int = 0
 
-        self.instructions: Dict[int, List[str]] = {}
+        self.instructions: Dict[int, Tuple[List[str]]] = {}
 
-    def load_programm(self, programm: List[str]) -> List[Tuple[int, List[str]]]:
+    def load_programm(self, programm: Dict[int, str]) -> List[Tuple[int, List[str]]]:
         symbol_table, self.instructions = self.assembler.parse_programm(programm)
         self.pc = 0
 
-        parsed_programm = [(value, f"{key}label>") for key, value in symbol_table.items()]
+        parsed_programm = [(key, value) for key, value in symbol_table.items()]
         parsed_programm.extend([(key, value) for key, value in self.instructions.items()])
         parsed_programm.sort(key=lambda item: item[0])
 

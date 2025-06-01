@@ -1,11 +1,8 @@
-import sys
+from typing import Dict
 from PySide6.QtWidgets import (
-    QApplication,
     QMainWindow,
     QWidget,
-    QPlainTextEdit,
     QGridLayout,
-    QFileDialog,
     QMenuBar,
     QToolBar,
 )
@@ -14,10 +11,9 @@ from PySide6.QtGui import QAction
 from src.view.editor import Editor
 from src.view.register import Register
 from .file_loader import FileLoader
-from loguru import logger
 
 
-class MainWindow(QMainWindow):
+class Window(QMainWindow):
     WINDOW_TITLE = "RISC-V-Emulator"
     MENU_FILE = "File"
     MENU_OPEN_FILE = "Open File"
@@ -64,26 +60,6 @@ class MainWindow(QMainWindow):
         main_widget = QWidget()
         main_widget.setLayout(main_layout)
         self.setCentralWidget(main_widget)
-        # self.run_programm.triggered.connect(self._run)
-
-    def move(self):
-        self.global_index += 1
-        self.editor.move_cursor(self.global_index)
-
-        instruction = self.editor.get_block()
-        line_number = self.editor.get_line_numnber()
-        logger.info(f"{line_number}-->{instruction}")
-
-        self.run_instruction(instruction)
-        self.global_index = line_number
-
-    def _run(self):
-        logger.info("Run Programm")
-        # instructions = self.editor.toPlainText().split("\n")
-
-        # self.global_index = -1
-        # self.editor.set_read_mode(True)
-        # self.move()
 
     def open_file(self):
         for line in self.file_loader.import_from_dialog():
@@ -93,5 +69,8 @@ class MainWindow(QMainWindow):
         for line in self.file_loader.read_file(filename):
             self.editor.append_html(line)
 
-    def get_programm(self):
-        return self.editor.get_text()
+    def get_programm(self) -> Dict[int, str]:
+        return {idx: line for idx, line in enumerate(self.editor.get_text())}
+
+    def move_debug_cursor(self, line_number):
+        self.editor.move_cursor(line_number)

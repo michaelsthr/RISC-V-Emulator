@@ -1,3 +1,4 @@
+alpha:
     addi x1 , x0 , 7    # x1 = 7
     addi x2 , x0 , 7    # x2 = 7
     beq x1 , x2 , equal # springe nach 'equal' fallsgleich

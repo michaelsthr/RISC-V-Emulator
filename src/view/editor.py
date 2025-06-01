@@ -39,7 +39,9 @@ class Editor(QPlainTextEdit):
 
         self._highlight_block(color="orange")
 
-        logger.info(f"Current Block: [{self.get_block()}] Cursor block_pos: {block_pos}, line_number: {line_number} ")
+        logger.info(
+            f"Current Block: [{self.get_block()}] Cursor block_pos: {block_pos}, line_number: {line_number} "
+        )
 
     def _highlight_block(self, color: str):
         char_format = QTextCharFormat()
@@ -62,10 +64,10 @@ class Editor(QPlainTextEdit):
 
     def get_block(self) -> str:
         return self.textCursor().block().text()
-    
-    def get_line_numnber(self) -> int:
+
+    def get_line_number(self) -> int:
         return self.textCursor().blockNumber()
-    
+
     def set_read_mode(self, mode: bool):
         self.setReadOnly(mode)
         logger.info(f"Read mode set to: {mode}")
