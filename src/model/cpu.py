@@ -1,6 +1,7 @@
 from traceback import format_exc
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from loguru import logger
+from collections import defaultdict
 
 from .word import Word
 from .register import Registers
@@ -21,9 +22,15 @@ class CPU:
 
         self.instructions: Dict[int, List[str]] = {}
 
-    def load_programm(self, programm: List[str]):
-        _, self.instructions = self.assembler.parse_programm(programm)
+    def load_programm(self, programm: List[str]) -> List[Tuple[int, List[str]]]:
+        symbol_table, self.instructions = self.assembler.parse_programm(programm)
         self.pc = 0
+
+        parsed_programm = [(value, f"{key}label>") for key, value in symbol_table.items()]
+        parsed_programm.extend([(key, value) for key, value in self.instructions.items()])
+        parsed_programm.sort(key=lambda item: item[0])
+
+        return parsed_programm
 
     def get_programm_len(self):
         return len(self.instructions)
@@ -195,7 +202,7 @@ if __name__ == "__main__":
         programm: List[str] = [
             "addi x1 , x0 , 7 # x1 = 7",
             "addi x2 , x0 , 7 # x2 = 7",
-            "beq x1 , x2 , equal #springe nach ’equal’ fallsgleich",
+            "beq x1 , x2 , equal #springe nach 'equal' fallsgleich",
             "addi x3 , x0 , 1 # wird uebersprungen",
             "equal:",
             "addi x3 , x0 , 99 # x3 = 99",

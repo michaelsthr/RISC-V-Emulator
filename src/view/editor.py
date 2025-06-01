@@ -20,8 +20,13 @@ class Editor(QPlainTextEdit):
         logger.info(f"Append HTML: {text}")
         # TODO: Zero is here twice
         # TODO: Color is not fixed
-        # self.appendHtml(f"<font color='gray'>{self.blockCount()}</font>\t{text}")
+        # text = text.replace(" ", "&nbsp;")
         self.appendHtml(text)
+
+    def update_editor(self, programm: list):
+        self.clear()
+        for line in programm:
+            self.appendHtml(line)
 
     def move_cursor(self, line_number: int):
         self._unhighlight_block()
