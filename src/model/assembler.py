@@ -64,6 +64,6 @@ class Assembler:
 
     def parse_programm(
         self, programm: List[str]
-    ) -> Tuple[Dict[str, int], Dict[List[str], int]]:
+    ) -> Tuple[Dict[str, int], Dict[int, List[str]]]:
         """Returns symbol_table: Dict[str, int] and instructions: Dict[int, List[str]]"""
         return self.parse_symbol_table(programm), self.parse_instructions(programm)
