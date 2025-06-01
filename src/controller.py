@@ -29,6 +29,7 @@ class Controller:
     def start_programm(self):
         logger.info("Run Programm")
         # I know, the nested types are horrendous ...
+        # I'm sorry for this :(
 
         # load programm to cpu
         # Maps: original_line number and the value
