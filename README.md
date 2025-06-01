@@ -20,5 +20,9 @@
 
 - li
 
+### Branch
+
+- beq
+
 
 ### Load and Store

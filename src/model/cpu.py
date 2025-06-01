@@ -1,32 +1,48 @@
+from traceback import format_exc
+from typing import Dict, List
 from loguru import logger
-import re
 
 from .word import Word
 from .register import Registers
+from .assembler import Assembler
 
 
 class CPU:
     def __init__(self, registers_size=32):
+        self.assembler = Assembler()
         self.registers = Registers(size=registers_size)
 
-        # I know, the instruction count is normally in the Register
+        # I know, the programm counter is normally in the Register
         # Fortunately i`m creating only a simulator :)
+        # And i also know, the programm counter increments by four,
+        # because the instructions are four bytes long
+        # We increment by one ;)
         self.pc: int = 0
 
-    def run_instruction(self, instruction: str):
-        parts = re.findall(r"[a-zA-Z0-9_]+", instruction)
-        function: str = parts[0]
-        args: list[str] = parts[1:]
+        self.instructions: Dict[int, List[str]] = {}
+
+    def load_programm(self, programm: List[str]):
+        _, self.instructions = self.assembler.parse_programm(programm)
+        self.pc = 0
+
+    def get_programm_len(self):
+        return len(self.instructions)
+
+    def run_next_instruction(self):
+        function: str = self.instructions[self.pc][0]
+        args: List[str] = self.instructions[self.pc][1:]
 
         try:
+            logger.info(f"Run instruction: '{self.pc}:{self.instructions[self.pc]}")
             # run specific function
             getattr(self, f"_{function}")(*args)
-        except AttributeError:
-            logger.error("Instruction is not defined")
+            print("\n")
+        except AttributeError as e:
+            logger.error(f"Instruction is not defined: {e}, {format_exc()}")
         except TypeError as e:
-            logger.error(f"Invalid arguments for instruction: {e}")
+            logger.error(f"Invalid arguments for instruction: {e}, {format_exc()}")
         except Exception as ex:
-            logger.error(ex)
+            logger.error(f"{ex}, {format_exc()}")
 
     def get_register_index(self, r: str):
         try:
@@ -45,6 +61,8 @@ class CPU:
     def increment_pc(self, amount: int = 1):
         self.pc += amount
         logger.info(f"Instruction count set to: {self.pc}")
+
+    ### INSTRUCTIONS ###
 
     def get_imm(self, imm: str):
         try:
@@ -159,10 +177,34 @@ class CPU:
 
         logger.info(f"Set register x{rd} to: x{rd} = {imm}")
 
+    def _beq(self, rs1: str, rs2: str, imm: str):
+        logger.info(f"Run beq with rs1={rs1}, rs2={rs2}, imm={imm}")
+        rs1 = self.get_register_index(rs1)
+        rs2 = self.get_register_index(rs2)
+        imm = self.get_imm(imm)
+
+        if self.registers[rs1] == self.registers[rs2]:
+            self.pc = imm
+
+        logger.info(f"Set pc: {self.pc} to: pc = {imm}")
+
 
 if __name__ == "__main__":
-    cpu = CPU()
-    instruction: str = "add x3, x1, x2"
-    cpu.run_instruction(instruction)
-    # print(cpu.registers)
-    # print(cpu.registers[0].dez)
+    try:
+        cpu = CPU()
+        programm: List[str] = [
+            "addi x1 , x0 , 7 # x1 = 7",
+            "addi x2 , x0 , 7 # x2 = 7",
+            "beq x1 , x2 , equal #springe nach ’equal’ fallsgleich",
+            "addi x3 , x0 , 1 # wird uebersprungen",
+            "equal:",
+            "addi x3 , x0 , 99 # x3 = 99",
+        ]
+        cpu.load_programm(programm)
+
+        for i in range(cpu.get_programm_len() - 1):
+            cpu.run_next_instruction()
+        # print(cpu.registers)
+        # print(cpu.registers[0].dez)
+    except Exception as ex:
+        print(ex, format_exc())
