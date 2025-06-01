@@ -56,8 +56,9 @@ class Assembler:
                     f"It should match {LABEL_REGEX} or {INSTRUCTION_REGEX}"
                 )
 
+            temp_table = {value[0]: value[1] for _, value in self.symbol_table.items()}
             instruction: List[str] = [
-                self.symbol_table.get(group, group) for group in match.groups()
+                temp_table.get(group, group) for group in match.groups()
             ]
             self.instructions[idx] = (instruction, adr)
             adr += 1

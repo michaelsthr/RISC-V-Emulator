@@ -1,4 +1,3 @@
-
 from pprint import pprint
 import sys
 from typing import Dict, List
@@ -29,37 +28,22 @@ class Controller:
 
     def start_programm(self):
         logger.info("Run Programm")
+        # I know, the nested types are horrendous ...
 
         # load programm to cpu
         # Maps: original_line number and the value
         programm: Dict[int, str] = self.window.get_programm()
 
-        pprint(programm)
-
-        print('#'*10)
-
         parsed_programm = self.cpu.load_programm(programm)
-        # print(parsed_programm)
         pprint(parsed_programm)
 
-        # pc = self.cpu.get_pc()
-        # registers = self.cpu.get_registers()
-
-        # print(parsed_programm)
-        # lines = [
-        #     " ".join((i if isinstance(i, str) else str(i)) for i in value)
-        #     for key, value in parsed_programm
-        # ]
-        # self.window.editor.update_editor(lines)
-        # offset = 0
-        # block: str = self.window.editor.get_block()
-        # print("block", block)
-        # while block.endswith("e q u a l l"):
-        #     offset += 1
-        #     print("offsetted")
-        # self.window.editor.move_cursor(pc + offset)
+        self.update_ui()
 
     def run_next_instruction(self):
         self.cpu.run_next_instruction()
-        pc = self.cpu.get_pc()
+        self.update_ui()
 
+    def update_ui(self):
+        pc = self.cpu.get_pc()
+        origin_line_number = self.cpu.get_current_origin_line_number()
+        self.window.move_debug_cursor(line_number=origin_line_number)

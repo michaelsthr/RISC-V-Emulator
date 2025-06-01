@@ -21,14 +21,20 @@ class CPU:
         # We increment by one ;)
         self.pc: int = 0
 
-        self.instructions: Dict[int, Tuple[List[str]]] = {}
+        self.instructions: Dict[int, Tuple[List[str], int]] = {}
 
-    def load_programm(self, programm: Dict[int, str]) -> List[Tuple[int, List[str]]]:
+    def load_programm(
+        self, programm: Dict[int, str]
+    ) -> List[Tuple[int, Tuple[List[str], int]]]:
         symbol_table, self.instructions = self.assembler.parse_programm(programm)
         self.pc = 0
 
-        parsed_programm = [(key, value) for key, value in symbol_table.items()]
-        parsed_programm.extend([(key, value) for key, value in self.instructions.items()])
+        parsed_programm = [
+            (key, (value[0].split(), value[1])) for key, value in symbol_table.items()
+        ]
+        parsed_programm.extend(
+            [(key, value) for key, value in self.instructions.items()]
+        )
         parsed_programm.sort(key=lambda item: item[0])
 
         return parsed_programm
@@ -37,11 +43,12 @@ class CPU:
         return len(self.instructions)
 
     def run_next_instruction(self):
-        function: str = self.instructions[self.pc][0]
-        args: List[str] = self.instructions[self.pc][1:]
+        instruction = {value[1]: value[0] for _, value in self.instructions.items()}
+        function: str = instruction[self.pc][0]
+        args: List[str] = instruction[self.pc][1:]
 
         try:
-            logger.info(f"Run instruction: '{self.pc}:{self.instructions[self.pc]}")
+            logger.info(f"Run instruction: '{self.pc}:{instruction[self.pc]}")
             # run specific function
             getattr(self, f"_{function}")(*args)
             print("\n")
@@ -65,6 +72,16 @@ class CPU:
 
     def get_pc(self) -> int:
         return self.pc
+
+    def get_current_origin_line_number(self):
+        # reversed() is important! 
+        # Label and instruction have the same adr! We need the instruction!
+        for origin_line_number, (_, pc) in reversed(list(self.instructions.items())):
+            if pc == self.pc:
+                return origin_line_number
+        raise ValueError(
+            f"Original line number with pc {self.pc} not found in {self.instructions}!"
+        )
 
     def increment_pc(self, amount: int = 1):
         self.pc += amount
