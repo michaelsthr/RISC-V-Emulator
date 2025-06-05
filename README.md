@@ -30,4 +30,3 @@
 
 ### Known bugs:
 - If the editor wraps the text, blocks not parsed well
-- If not equal, it is not working

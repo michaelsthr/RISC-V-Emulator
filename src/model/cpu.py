@@ -210,6 +210,8 @@ class CPU:
 
         if self.registers[rs1] == self.registers[rs2]:
             self.pc = imm
+        else:
+            self.increment_pc()
 
         logger.info(f"Set pc: {self.pc} to: pc = {imm}")
 
