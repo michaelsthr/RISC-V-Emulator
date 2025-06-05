@@ -17,9 +17,8 @@ class RegisterView(QTableWidget):
     def __init__(self, registers: Registers):
         super().__init__()
         # font
-        font = QFont()
+        font = QFont("PT Mono")
         font.setPixelSize(16)
-        font.setFamilies(["Monospace"])
         self.setFont(font)
 
         # table setup

@@ -5,6 +5,8 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QMenuBar,
     QToolBar,
+    QFontComboBox,
+    QHBoxLayout,
 )
 from PySide6.QtGui import QAction
 
@@ -12,6 +14,7 @@ from src.model.register import Registers
 from .editor_view import Editor
 from .register_view import RegisterView
 from .file_loader_view import FileLoader
+from .terminal_view import Terminal
 
 
 class Window(QMainWindow):
@@ -52,9 +55,13 @@ class Window(QMainWindow):
         ### Main Layout
         self.editor = Editor()
         self.register = RegisterView(registers=registers)
+        self.terminal = Terminal()
         main_layout = QGridLayout()
-        main_layout.addWidget(self.editor, 0, 0)
+        main_layout.addWidget(self.editor, 0, 0, 2, 1)
         main_layout.addWidget(self.register, 0, 1)
+        main_layout.addWidget(self.terminal, 1, 1)
+        main_layout.setColumnStretch(0, 10)
+        main_layout.setColumnStretch(1, 8)
 
         main_widget = QWidget()
         main_widget.setLayout(main_layout)

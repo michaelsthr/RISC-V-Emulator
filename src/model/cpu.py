@@ -51,7 +51,7 @@ class CPU:
             logger.info(f"Run instruction: '{self.pc}:{instruction[self.pc]}")
             # run specific function
             getattr(self, f"_{function}")(*args)
-            print("\n")
+            logger.info("\n")
         except AttributeError as e:
             logger.error(f"Instruction is not defined: {e}, {format_exc()}")
         except TypeError as e:

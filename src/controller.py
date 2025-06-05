@@ -14,6 +14,12 @@ class Controller:
         self._init_model()
         self._init_view()
         self._connect_view()
+        self.__init_logger()
+
+    def __init_logger(self):
+        logger.remove()  # Remove default logger configuration
+        logger.add(sys.stdout, format="{message}", level="INFO")
+        logger.add(self.window.terminal.append_text, format="{message}", level="INFO")
 
     def _init_model(self):
         self.cpu = CPU()
@@ -22,7 +28,6 @@ class Controller:
         self.window = Window()
         self.window._init_ui(registers=self.cpu.registers)
         self.window.show()
-
 
     def _connect_view(self):
         self.window.run_programm.triggered.connect(self.start_programm)

@@ -7,24 +7,17 @@ class Editor(QPlainTextEdit):
     def __init__(self):
         super().__init__()
 
-        font = QFont()
+        font = QFont("PT Mono")
         font.setPixelSize(20)
-        font.setFamilies("monospace")
         self.setFont(font)
 
         logger.info("InputBox created")
 
     def append_html(self, text: str):
-        logger.info(f"Append HTML: {text}")
         # TODO: Zero is here twice
         # TODO: Color is not fixed
         # text = text.replace(" ", "&nbsp;")
         self.appendHtml(text)
-
-    def update_editor(self, programm: list):
-        self.clear()
-        for line in programm:
-            self.appendHtml(line)
 
     def move_cursor(self, line_number: int):
         self._unhighlight_block()
