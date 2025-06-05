@@ -79,9 +79,7 @@ class CPU:
         for origin_line_number, (_, pc) in reversed(list(self.instructions.items())):
             if pc == self.pc:
                 return origin_line_number
-        raise ValueError(
-            f"Original line number with pc {self.pc} not found in {self.instructions}!"
-        )
+        return "END"
 
     def increment_pc(self, amount: int = 1):
         self.pc += amount

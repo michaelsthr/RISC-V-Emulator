@@ -42,8 +42,7 @@ class Controller:
         # Maps: original_line number and the value
         programm: Dict[int, str] = self.window.get_programm()
 
-        parsed_programm = self.cpu.load_programm(programm)
-        pprint(parsed_programm)
+        self.cpu.load_programm(programm)
 
         self.update_ui()
 
@@ -54,7 +53,11 @@ class Controller:
     def update_ui(self):
         pc = self.cpu.get_pc()
         origin_line_number = self.cpu.get_current_origin_line_number()
-        self.window.move_debug_cursor(line_number=origin_line_number)
+        if origin_line_number == "END":
+            logger.info("End of file reached, finishing debugging")
+            self.window.finish_debug_cursor()
+        else:
+            self.window.move_debug_cursor(line_number=origin_line_number)
 
         registers = self.cpu.get_registers()
         self.window.update_registers(registers)

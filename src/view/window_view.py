@@ -83,3 +83,6 @@ class Window(QMainWindow):
 
     def update_registers(self, registers: Registers):
         self.register.update_registers(registers=registers)
+
+    def finish_debug_cursor(self):
+        self.editor.finish_debug_cursor()

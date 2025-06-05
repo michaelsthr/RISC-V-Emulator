@@ -56,3 +56,6 @@ class Editor(QPlainTextEdit):
     def set_read_mode(self, mode: bool):
         self.setReadOnly(mode)
         logger.info(f"Read mode set to: {mode}")
+
+    def finish_debug_cursor(self):
+        self._unhighlight_block()
