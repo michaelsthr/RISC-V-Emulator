@@ -6,6 +6,7 @@ from loguru import logger
 class Editor(QPlainTextEdit):
     def __init__(self):
         super().__init__()
+        self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
 
         font = QFont("PT Mono")
         font.setPixelSize(20)
