@@ -1,30 +1,80 @@
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QListWidget, QListWidgetItem
-from PySide6.QtGui import QIcon, QColor, QFont
-from PySide6.QtGui import QPixmap, QPainter
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtWidgets import (
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView,
+    QAbstractItemView,
+)
+from PySide6.QtGui import QIcon, QColor, QFont, QPixmap, QPainter
+from PySide6.QtCore import Qt
 
 from src.model.register import Registers
 
 
-class RegisterView(QListWidget):
+class RegisterView(QTableWidget):
     def __init__(self, registers: Registers):
         super().__init__()
-        layout = QVBoxLayout()
+        # font
+        font = QFont()
+        font.setPixelSize(16)
+        font.setFamilies(["Monospace"])
+        self.setFont(font)
 
+        # table setup
+        self.setColumnCount(4)
+        headers = ["Reg", "Base2", "Base10", "Base16"]
+        self.setHorizontalHeaderLabels(headers)
+        header = self.horizontalHeader()
+
+        # Interactive               = ...  # 0x0
+        # Stretch                   = ...  # 0x1
+        # Custom                    = ...  # 0x2
+        # Fixed                     = ...  # 0x2
+        # ResizeToContents          = ...  # 0x3
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
+
+        self.verticalHeader().setVisible(False)
+        self.setShowGrid(False)
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+        self.align_left_vcenter = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
         self.update_registers(registers)
-        self.setLayout(layout)
 
     def update_registers(self, registers: Registers):
-        self.clear()
-        for idx in range(len(registers)):
-            register = registers[idx]
+        len_reg = len(registers)
+        self.setRowCount(len_reg)
+        for idx in range(len_reg):
+            word = registers[idx]
 
-            pixmap = self.get_pixmap(idx=idx)
-            icon = QIcon(pixmap)
-            item = QListWidgetItem(icon, f"{register}")
-            self.addItem(item)
+            # pixmap = self.get_pixmap(idx)
+            # icon = QIcon(pixmap)
 
-    def get_pixmap(self, idx: str):
+            # register name
+            name_item = QTableWidgetItem(f"x{idx}")
+            name_item.setFont("Monospace")
+            # name_item.setIcon(icon)
+            name_item.setTextAlignment(self.align_left_vcenter)
+            self.setItem(idx, 0, name_item)
+
+            # binary
+            bin_item = QTableWidgetItem(word.bin)
+            bin_item.setFont("Monospace")
+            bin_item.setTextAlignment(self.align_left_vcenter)
+            self.setItem(idx, 1, bin_item)
+
+            # decimal
+            dec_item = QTableWidgetItem(str(word.dez))
+            dec_item.setTextAlignment(self.align_left_vcenter)
+            self.setItem(idx, 2, dec_item)
+
+            # hex
+            hex_item = QTableWidgetItem(word.hex)
+            hex_item.setTextAlignment(self.align_left_vcenter)
+            self.setItem(idx, 3, hex_item)
+
+            self.setRowHeight(idx, 1)
+
+    # obsolete
+    def get_pixmap(self, idx: int) -> QPixmap:
         pixmap = QPixmap(32, 32)
         pixmap.fill(QColor(32, 33, 36, 255))
         painter = QPainter(pixmap)
@@ -34,5 +84,4 @@ class RegisterView(QListWidget):
         painter.setFont(font)
         painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignLeft, f"x{idx}")
         painter.end()
-
         return pixmap
