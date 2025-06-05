@@ -11,6 +11,9 @@ from src.model.register import Registers
 
 
 class RegisterView(QTableWidget):
+
+    FONT = "PT Mono"
+
     def __init__(self, registers: Registers):
         super().__init__()
         # font
@@ -23,7 +26,8 @@ class RegisterView(QTableWidget):
         self.setColumnCount(4)
         headers = ["Reg", "Base2", "Base10", "Base16"]
         self.setHorizontalHeaderLabels(headers)
-        header = self.horizontalHeader()
+        header: QHeaderView = self.horizontalHeader()
+        header.setFont(self.FONT)
 
         # Interactive               = ...  # 0x0
         # Stretch                   = ...  # 0x1
@@ -50,24 +54,26 @@ class RegisterView(QTableWidget):
 
             # register name
             name_item = QTableWidgetItem(f"x{idx}")
-            name_item.setFont("Monospace")
+            name_item.setFont(self.FONT)
             # name_item.setIcon(icon)
             name_item.setTextAlignment(self.align_left_vcenter)
             self.setItem(idx, 0, name_item)
 
             # binary
             bin_item = QTableWidgetItem(word.bin)
-            bin_item.setFont("Monospace")
+            bin_item.setFont(self.FONT)
             bin_item.setTextAlignment(self.align_left_vcenter)
             self.setItem(idx, 1, bin_item)
 
             # decimal
             dec_item = QTableWidgetItem(str(word.dez))
+            dec_item.setFont(self.FONT)
             dec_item.setTextAlignment(self.align_left_vcenter)
             self.setItem(idx, 2, dec_item)
 
             # hex
             hex_item = QTableWidgetItem(word.hex)
+            hex_item.setFont(self.FONT)
             hex_item.setTextAlignment(self.align_left_vcenter)
             self.setItem(idx, 3, hex_item)
 
