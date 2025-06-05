@@ -9,9 +9,9 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QAction
 
 from src.model.register import Registers
-from src.view.editor import Editor
-from src.view.register import RegisterView
-from .file_loader import FileLoader
+from view.editor_view import Editor
+from view.register_view import RegisterView
+from .file_loader_view import FileLoader
 
 
 class Window(QMainWindow):

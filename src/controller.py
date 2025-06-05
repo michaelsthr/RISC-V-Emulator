@@ -6,7 +6,7 @@ import qdarktheme
 from loguru import logger
 
 from .model.cpu import CPU
-from .view.window import Window
+from .view.window_view import Window
 
 
 class Controller:
