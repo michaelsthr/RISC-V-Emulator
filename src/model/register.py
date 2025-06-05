@@ -23,6 +23,9 @@ class Registers:
     def __setitem__(self, key: int, value: Word):
         self._registers[key] = value
 
+    def __len__(self):
+        return len(self._registers)
+
     @property
     def registers(self) -> list[Word]:
         return self._registers

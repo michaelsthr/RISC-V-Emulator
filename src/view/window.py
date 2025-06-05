@@ -8,8 +8,9 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QAction
 
+from src.model.register import Registers
 from src.view.editor import Editor
-from src.view.register import Register
+from src.view.register import RegisterView
 from .file_loader import FileLoader
 
 
@@ -25,9 +26,7 @@ class Window(QMainWindow):
         self.setWindowTitle(self.WINDOW_TITLE)
         self.file_loader = FileLoader(self)
 
-        self._init_ui()
-
-    def _init_ui(self):
+    def _init_ui(self, registers: Registers):
         ### Menu Bar ###
         menu_bar = QMenuBar(self)
         file_menu = menu_bar.addMenu(self.MENU_FILE)
@@ -52,7 +51,7 @@ class Window(QMainWindow):
 
         ### Main Layout
         self.editor = Editor()
-        self.register = Register(size=32)
+        self.register = RegisterView(registers=registers)
         main_layout = QGridLayout()
         main_layout.addWidget(self.editor, 0, 0)
         main_layout.addWidget(self.register, 0, 1)
@@ -74,3 +73,6 @@ class Window(QMainWindow):
 
     def move_debug_cursor(self, line_number):
         self.editor.move_cursor(line_number)
+
+    def update_registers(self, registers: Registers):
+        self.register.update_registers(registers=registers)

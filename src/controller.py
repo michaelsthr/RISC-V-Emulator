@@ -15,12 +15,14 @@ class Controller:
         self._init_view()
         self._connect_view()
 
-    def _init_view(self):
-        self.window = Window()
-        self.window.show()
-
     def _init_model(self):
         self.cpu = CPU()
+
+    def _init_view(self):
+        self.window = Window()
+        self.window._init_ui(registers=self.cpu.registers)
+        self.window.show()
+
 
     def _connect_view(self):
         self.window.run_programm.triggered.connect(self.start_programm)
@@ -48,3 +50,6 @@ class Controller:
         pc = self.cpu.get_pc()
         origin_line_number = self.cpu.get_current_origin_line_number()
         self.window.move_debug_cursor(line_number=origin_line_number)
+
+        registers = self.cpu.get_registers()
+        self.window.update_registers(registers)
