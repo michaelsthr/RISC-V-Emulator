@@ -1,7 +1,5 @@
-from PySide6.QtWidgets import QPlainTextEdit
-from PySide6.QtGui import QTextCursor
-from PySide6.QtGui import QFont, QColor, QBrush, QTextCharFormat
-from PySide6 import QtGui
+from PySide6.QtWidgets import QPlainTextEdit, QTextEdit
+from PySide6.QtGui import QFont, QColor, QTextFormat
 from loguru import logger
 
 
@@ -37,27 +35,21 @@ class Editor(QPlainTextEdit):
         cursor.setPosition(block_pos)
         self.setTextCursor(cursor)
 
-        self._highlight_block(color="orange")
+        self._highlight_block(color="darkorange")
 
         logger.info(
             f"Current Block: [{self.get_block()}] Cursor block_pos: {block_pos}, line_number: {line_number} "
         )
 
     def _highlight_block(self, color: str):
-        char_format = QTextCharFormat()
-        char_format.setForeground(QBrush(QColor(color)))
-        char_format.setFontItalic(True)
-        char_format.setUnderlineStyle(QTextCharFormat.UnderlineStyle.SingleUnderline)
-
-        cursor: QTextCursor = self.textCursor()
-        cursor.movePosition(QTextCursor.StartOfBlock)
-        cursor.select(QTextCursor.BlockUnderCursor)
-        cursor.setCharFormat(char_format)
+        extra_selection = QTextEdit.ExtraSelection()
+        extra_selection.format.setBackground(QColor(color))
+        extra_selection.format.setProperty(QTextFormat.FullWidthSelection, True)
+        extra_selection.cursor = self.textCursor()
+        self.setExtraSelections([extra_selection])
 
     def _unhighlight_block(self):
-        cursor: QTextCursor = self.textCursor()
-        cursor.select(QtGui.QTextCursor.LineUnderCursor)
-        cursor.setCharFormat(QtGui.QTextCharFormat())
+        self.setExtraSelections([])
 
     def get_text(self) -> list:
         return self.toPlainText().split("\n")
