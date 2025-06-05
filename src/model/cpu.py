@@ -1,8 +1,6 @@
-from pprint import pprint
 from traceback import format_exc
 from typing import Dict, List, Tuple
 from loguru import logger
-from collections import defaultdict
 
 from .word import Word
 from .register import Registers
@@ -22,6 +20,14 @@ class CPU:
         self.pc: int = 0
 
         self.instructions: Dict[int, Tuple[List[str], int]] = {}
+
+    def reset(self):
+        self.assembler = Assembler()
+        self.pc = 0
+        self.instructions = {}
+
+        registers_size = len(self.registers)
+        self.registers = Registers(size=registers_size)
 
     def load_programm(
         self, programm: Dict[int, str]
@@ -74,7 +80,7 @@ class CPU:
         return self.pc
 
     def get_current_origin_line_number(self):
-        # reversed() is important! 
+        # reversed() is important!
         # Label and instruction have the same adr! We need the instruction!
         for origin_line_number, (_, pc) in reversed(list(self.instructions.items())):
             if pc == self.pc:

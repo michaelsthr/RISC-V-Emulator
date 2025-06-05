@@ -35,6 +35,8 @@ class Controller:
 
     def start_programm(self):
         logger.info("Run Programm")
+        self.cpu.reset()
+        self.window.reset()
         # I know, the nested types are horrendous ...
         # I'm sorry for this :(
 

@@ -86,3 +86,7 @@ class Window(QMainWindow):
 
     def finish_debug_cursor(self):
         self.editor.finish_debug_cursor()
+
+    def reset(self):
+        self.terminal.clear()
+        self.editor.finish_debug_cursor()
