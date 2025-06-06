@@ -219,6 +219,19 @@ class CPU:
 
         logger.info(f"Set pc: {self.pc} to: pc = {imm}")
 
+    def _bne(self, rs1: str, rs2: str, imm: str):
+        logger.info(f"Run beq with rs1={rs1}, rs2={rs2}, imm={imm}")
+        rs1 = self.get_register_index(rs1)
+        rs2 = self.get_register_index(rs2)
+        imm = self.get_imm(imm)
+
+        if self.registers[rs1] != self.registers[rs2]:
+            self.pc = imm
+        else:
+            self.increment_pc()
+
+        logger.info(f"Set pc: {self.pc} to: pc = {imm}")
+
 
 if __name__ == "__main__":
     try:

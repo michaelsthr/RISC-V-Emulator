@@ -23,6 +23,7 @@
 ### Branch
 
 - beq
+- bne
 
 
 ### Load and Store
