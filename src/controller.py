@@ -3,6 +3,7 @@ import sys
 from typing import Dict, List
 from PySide6.QtWidgets import QApplication
 import qdarktheme
+from colorama import Fore
 from loguru import logger
 
 from .model.cpu import CPU
@@ -26,7 +27,7 @@ class Controller:
 
     def _init_view(self):
         self.window = Window()
-        self.window._init_ui(registers=self.cpu.registers)
+        self.window._init_ui(registers=self.cpu._registers)
         self.window.show()
 
     def _connect_view(self):
@@ -56,7 +57,7 @@ class Controller:
         pc = self.cpu.get_pc()
         origin_line_number = self.cpu.get_current_origin_line_number()
         if origin_line_number == "END":
-            logger.info("End of file reached, finishing debugging")
+            logger.info(f"\n{Fore.GREEN}END OF FILE REACHED | FINISHING DEBUGGING{Fore.RESET}")
             self.window.finish_debug_cursor()
         else:
             self.window.move_debug_cursor(line_number=origin_line_number)

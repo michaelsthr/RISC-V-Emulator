@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QPlainTextEdit
 from PySide6.QtGui import QFont
+from ansi2html import Ansi2HTMLConverter
 
 
 class Terminal(QPlainTextEdit):
@@ -11,6 +12,9 @@ class Terminal(QPlainTextEdit):
         self.setFont(font)
         self.setReadOnly(True)
 
+        self.conv = Ansi2HTMLConverter()
+
     def append_text(self, text: str):
-        clean_text = text.rstrip("\n")
-        self.appendPlainText(clean_text)
+        text = text.rstrip("\n")
+        text = self.conv.convert(text)
+        self.appendHtml(text)

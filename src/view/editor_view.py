@@ -31,10 +31,6 @@ class Editor(QPlainTextEdit):
 
         self._highlight_block(color="darkorange")
 
-        logger.info(
-            f"Current Block: [{self.get_block()}] Cursor block_pos: {block_pos}, line_number: {line_number} "
-        )
-
     def _highlight_block(self, color: str):
         extra_selection = QTextEdit.ExtraSelection()
         extra_selection.format.setBackground(QColor(color))

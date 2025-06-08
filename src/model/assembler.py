@@ -1,5 +1,7 @@
 import pprint
 from typing import Dict, List, Tuple
+from loguru import logger
+from colorama import Fore
 import re
 
 LABEL_REGEX: str = re.compile(
@@ -10,7 +12,7 @@ INSTRUCTION_REGEX: str = re.compile(
     r"^\s*"  # Begin, optional space
     r"([a-z]+)"  # Opcode (addi, beq, ...)
     r"\s+"  # Space
-    r"([x]\d+|\w+)"  # 1. operand
+    r"(?:([x]\d+|\w+))?"  # 1. operand (optional)
     r"(?:\s*,\s*([x]\d+|\w+))?"  # 2. operand (optional)
     r"(?:\s*,\s*([x]\d+|\w+))?"  # 3. operand (optional)
     r"\s*(?:#.*)?$"  # comment (optional)
@@ -39,15 +41,17 @@ class Assembler:
                     )
                 self.symbol_table[idx] = (line, adr)
                 continue
-            adr += 1
+            adr += 4
         return self.symbol_table
 
     def parse_instructions(self, programm: List[str]) -> Dict[List[str], int]:
         adr = 0
+        logger.info(f"{Fore.CYAN}PARSE INSTRUCIONS{Fore.RESET}")
         for idx, line in enumerate(programm):
             line = line.strip()
             if re.match(LABEL_REGEX, line):
                 continue
+            logger.info(f"  BEFORE: {idx}-->{line}")
 
             match = re.match(INSTRUCTION_REGEX, line)
             if not match:
@@ -57,11 +61,15 @@ class Assembler:
                 )
 
             temp_table = {value[0]: value[1] for _, value in self.symbol_table.items()}
+            logger.info(f"  {temp_table}")
+            logger.info(f"  GROUPS:{match.groups()}")
             instruction: List[str] = [
-                temp_table.get(group, group) for group in match.groups()
+                temp_table.get(group, group) for group in match.groups() if group is not None
             ]
             self.instructions[idx] = (instruction, adr)
-            adr += 1
+            adr += 4
+            logger.info(f"  AFTER: {idx}-->{self.instructions[idx]}")
+            logger.info("\n")
         return self.instructions
 
     def parse_programm(

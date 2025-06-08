@@ -1,16 +1,19 @@
 from traceback import format_exc
 from typing import Dict, List, Tuple
 from loguru import logger
+from colorama import Fore
+
 
 from .word import Word
 from .register import Registers
 from .assembler import Assembler
+from .instruction_exec import InstructionExec
 
 
 class CPU:
     def __init__(self, registers_size=32):
         self.assembler = Assembler()
-        self.registers = Registers(size=registers_size)
+        self._registers = Registers(size=registers_size)
 
         # I know, the programm counter is normally in the Register
         # Fortunately i`m creating only a simulator :)
@@ -20,20 +23,30 @@ class CPU:
         self.pc: int = 0
 
         self.instructions: Dict[int, Tuple[List[str], int]] = {}
+        self.instruction_exec = InstructionExec(self)
 
     def reset(self):
         self.assembler = Assembler()
         self.pc = 0
         self.instructions = {}
 
-        registers_size = len(self.registers)
-        self.registers = Registers(size=registers_size)
+        registers_size = len(self._registers)
+        self._registers = Registers(size=registers_size)
 
     def load_programm(
         self, programm: Dict[int, str]
     ) -> List[Tuple[int, Tuple[List[str], int]]]:
         symbol_table, self.instructions = self.assembler.parse_programm(programm)
         self.pc = 0
+
+        logger.info(f"{Fore.CYAN}SYMBOL TABLE{Fore.RESET}")
+        for item in symbol_table.items():
+            logger.info(f"  {item}")
+
+        logger.info("\n")
+        logger.info(f"{Fore.CYAN}INSTRUCTIONS{Fore.RESET}")
+        for item in self.instructions.items():
+            logger.info(f"  {item}")
 
         parsed_programm = [
             (key, (value[0].split(), value[1])) for key, value in symbol_table.items()
@@ -43,6 +56,10 @@ class CPU:
         )
         parsed_programm.sort(key=lambda item: item[0])
 
+        logger.info("\n")
+        logger.info(f"{Fore.CYAN}PROGRAMM LOADED | PARSED PROGRAMM{Fore.RESET}")
+        for line in parsed_programm:
+            logger.info(f"  {line}")
         return parsed_programm
 
     def get_programm_len(self):
@@ -54,10 +71,15 @@ class CPU:
         args: List[str] = instruction[self.pc][1:]
 
         try:
-            logger.info(f"Run instruction: '{self.pc}:{instruction[self.pc]}")
+            logger.info(f"\n{Fore.MAGENTA}> RUN INSTRUCTION{Fore.RESET}")
+            logger.info(f"  >> OLD PC={self.get_pc()}")
+            logger.info(f"  >> {function}({args})")
+
             # run specific function
-            getattr(self, f"_{function}")(*args)
-            logger.info("\n")
+            method = getattr(self.instruction_exec, f"_{function}")
+            method(*args)
+
+            logger.info(f"  >> NEW PC={self.get_pc()}")
         except AttributeError as e:
             logger.error(f"Instruction is not defined: {e}, {format_exc()}")
         except TypeError as e:
@@ -74,7 +96,7 @@ class CPU:
             )
 
     def get_registers(self) -> Registers:
-        return self.registers
+        return self._registers
 
     def get_pc(self) -> int:
         return self.pc
@@ -87,11 +109,8 @@ class CPU:
                 return origin_line_number
         return "END"
 
-    def increment_pc(self, amount: int = 1):
+    def increment_pc(self, amount: int = 4):
         self.pc += amount
-        logger.info(f"Instruction count set to: {self.pc}")
-
-    ### INSTRUCTIONS ###
 
     def get_imm(self, imm: str):
         try:
@@ -99,156 +118,6 @@ class CPU:
         except ValueError:
             raise ValueError(f"You can't get imm with following value: {imm}")
 
-    def _add(self, rd: str, rs1: str, rs2: str):
-        logger.info(f"Run add with rd={rd}, rs1={rs1}, rs2={rs2}")
-        rd = self.get_register_index(rd)
-        rs1 = self.get_register_index(rs1)
-        rs2 = self.get_register_index(rs2)
-
-        self.registers[rd] = self.registers[rs1] + self.registers[rs2]
-        self.increment_pc()
-
-        logger.info(
-            f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
-        )
-
-    def _sub(self, rd: str, rs1: str, rs2: str):
-        logger.info(f"Run sub with rd={rd}, rs1={rs1}, rs2={rs2}")
-        rd = self.get_register_index(rd)
-        rs1 = self.get_register_index(rs1)
-        rs2 = self.get_register_index(rs2)
-
-        self.registers[rd] = self.registers[rs1] - self.registers[rs2]
-        self.increment_pc()
-
-        logger.info(
-            f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
-        )
-
-    def _and(self, rd: str, rs1: str, rs2: str):
-        logger.info(f"Run and with rd={rd}, rs1={rs1}, rs2={rs2}")
-        rd = self.get_register_index(rd)
-        rs1 = self.get_register_index(rs1)
-        rs2 = self.get_register_index(rs2)
-
-        self.registers[rd] = self.registers[rs1] & self.registers[rs2]
-        self.increment_pc()
-
-        logger.info(
-            f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
-        )
-
-    def _or(self, rd: str, rs1: str, rs2: str):
-        logger.info(f"Run or with rd={rd}, rs1={rs1}, rs2={rs2}")
-        rd = self.get_register_index(rd)
-        rs1 = self.get_register_index(rs1)
-        rs2 = self.get_register_index(rs2)
-
-        self.registers[rd] = self.registers[rs1] | self.registers[rs2]
-        self.increment_pc()
-
-        logger.info(
-            f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
-        )
-
-    def _xor(self, rd: str, rs1: str, rs2: str):
-        logger.info(f"Run xor with rd={rd}, rs1={rs1}, rs2={rs2}")
-        rd = self.get_register_index(rd)
-        rs1 = self.get_register_index(rs1)
-        rs2 = self.get_register_index(rs2)
-
-        self.registers[rd] = self.registers[rs1] ^ self.registers[rs2]
-        self.increment_pc()
-
-        logger.info(
-            f"Set register x{rd} to: {self.registers[rd].dez} = {self.registers[rs1].dez} + {self.registers[rs2].dez}"
-        )
-
-    def _addi(self, rd: str, rs1: str, imm: str):
-        logger.info(f"Run addi with rd={rd}, rs1={rs1}, imm={imm}")
-        rd = self.get_register_index(rd)
-        rs1 = self.get_register_index(rs1)
-        imm = self.get_imm(imm)
-
-        self.registers[rd] = self.registers[rs1] + Word(imm)
-        self.increment_pc()
-
-        logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
-
-    def _andi(self, rd: str, rs1: str, imm: str):
-        logger.info(f"Run andi with rd={rd}, rs1={rs1}, imm={imm}")
-        rd = self.get_register_index(rd)
-        rs1 = self.get_register_index(rs1)
-        imm = self.get_imm(imm)
-
-        self.registers[rd] = self.registers[rs1] & Word(imm)
-        self.increment_pc()
-
-        logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
-
-    def _ori(self, rd: str, rs1: str, imm: str):
-        logger.info(f"Run ori with rd={rd}, rs1={rs1}, imm={imm}")
-        rd = self.get_register_index(rd)
-        rs1 = self.get_register_index(rs1)
-        imm = self.get_imm(imm)
-
-        self.registers[rd] = self.registers[rs1] | Word(imm)
-        self.increment_pc()
-
-        logger.info(f"Set register x{rd} to: x{rs1} = {imm}")
-
-    def _li(self, rd: str, imm: str):
-        logger.info(f"Run li with rd={rd}, imm={imm}")
-        rd = self.get_register_index(rd)
-        imm = self.get_imm(imm)
-        self.registers[rd] = Word(imm)
-        self.increment_pc()
-
-        logger.info(f"Set register x{rd} to: x{rd} = {imm}")
-
-    def _beq(self, rs1: str, rs2: str, imm: str):
-        logger.info(f"Run beq with rs1={rs1}, rs2={rs2}, imm={imm}")
-        rs1 = self.get_register_index(rs1)
-        rs2 = self.get_register_index(rs2)
-        imm = self.get_imm(imm)
-
-        if self.registers[rs1] == self.registers[rs2]:
-            self.pc = imm
-        else:
-            self.increment_pc()
-
-        logger.info(f"Set pc: {self.pc} to: pc = {imm}")
-
-    def _bne(self, rs1: str, rs2: str, imm: str):
-        logger.info(f"Run beq with rs1={rs1}, rs2={rs2}, imm={imm}")
-        rs1 = self.get_register_index(rs1)
-        rs2 = self.get_register_index(rs2)
-        imm = self.get_imm(imm)
-
-        if self.registers[rs1] != self.registers[rs2]:
-            self.pc = imm
-        else:
-            self.increment_pc()
-
-        logger.info(f"Set pc: {self.pc} to: pc = {imm}")
-
-
-if __name__ == "__main__":
-    try:
-        cpu = CPU()
-        programm: List[str] = [
-            "addi x1 , x0 , 7 # x1 = 7",
-            "addi x2 , x0 , 7 # x2 = 7",
-            "beq x1 , x2 , equal #springe nach 'equal' fallsgleich",
-            "addi x3 , x0 , 1 # wird uebersprungen",
-            "equal:",
-            "addi x3 , x0 , 99 # x3 = 99",
-        ]
-        cpu.load_programm(programm)
-
-        for i in range(cpu.get_programm_len() - 1):
-            cpu.run_next_instruction()
-        # print(cpu.registers)
-        # print(cpu.registers[0].dez)
-    except Exception as ex:
-        print(ex, format_exc())
+    @property
+    def registers(self) -> list[Word]:
+        return self._registers

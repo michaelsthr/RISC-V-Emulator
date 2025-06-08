@@ -1,0 +1,125 @@
+from typing import TYPE_CHECKING
+from loguru import logger
+
+from .register import Registers
+from .word import Word
+
+if TYPE_CHECKING:
+    from .cpu import CPU
+
+
+class InstructionExec:
+    def __init__(self, cpu: "CPU"):
+        self.cpu = cpu
+
+    def _get_register_index(self, r: str) -> int:
+        return self.cpu.get_register_index(r)
+
+    def _get_imm(self, imm: str) -> int:
+        return self.cpu.get_imm(imm)
+
+    def _increment_pc(self, amount: int = 4):
+        self.cpu.increment_pc(amount)
+
+    def _get_pc(self):
+        return self.cpu.get_pc()
+
+    # --- INSTRUCTIONS ---
+
+    def _add(self, rd: str, rs1: str, rs2: str):
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        rs2 = self._get_register_index(rs2)
+
+        self.cpu.registers[rd] = self.cpu.registers[rs1] + self.cpu.registers[rs2]
+        self._increment_pc()
+
+    def _sub(self, rd: str, rs1: str, rs2: str):
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        rs2 = self._get_register_index(rs2)
+
+        self.cpu.registers[rd] = self.cpu.registers[rs1] - self.cpu.registers[rs2]
+        self._increment_pc()
+
+    def _and(self, rd: str, rs1: str, rs2: str):
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        rs2 = self._get_register_index(rs2)
+
+        self.cpu.registers[rd] = self.cpu.registers[rs1] & self.cpu.registers[rs2]
+        self._increment_pc()
+
+    def _or(self, rd: str, rs1: str, rs2: str):
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        rs2 = self._get_register_index(rs2)
+
+        self.cpu.registers[rd] = self.cpu.registers[rs1] | self.cpu.registers[rs2]
+        self._increment_pc()
+
+    def _xor(self, rd: str, rs1: str, rs2: str):
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        rs2 = self._get_register_index(rs2)
+
+        self.cpu.registers[rd] = self.cpu.registers[rs1] ^ self.cpu.registers[rs2]
+        self._increment_pc()
+
+    def _addi(self, rd: str, rs1: str, imm: str):
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        imm = self._get_imm(imm)
+
+        self.cpu.registers[rd] = self.cpu.registers[rs1] + Word(imm)
+        self._increment_pc()
+
+    def _andi(self, rd: str, rs1: str, imm: str):
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        imm = self._get_imm(imm)
+
+        self.cpu.registers[rd] = self.cpu.registers[rs1] & Word(imm)
+        self._increment_pc()
+
+    def _ori(self, rd: str, rs1: str, imm: str):
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        imm = self._get_imm(imm)
+
+        self.cpu.registers[rd] = self.cpu.registers[rs1] | Word(imm)
+        self._increment_pc()
+
+    def _li(self, rd: str, imm: str):
+        rd = self._get_register_index(rd)
+        imm = self._get_imm(imm)
+
+        self.cpu.registers[rd] = Word(imm)
+        self._increment_pc()
+
+    def _beq(self, rs1: str, rs2: str, imm: str):
+        rs1 = self._get_register_index(rs1)
+        rs2 = self._get_register_index(rs2)
+        imm = self._get_imm(imm)
+
+        if self.cpu.registers[rs1] == self.cpu.registers[rs2]:
+            self.pc = imm
+        else:
+            self._increment_pc()
+
+    def _bne(self, rs1: str, rs2: str, imm: str):
+        rs1 = self._get_register_index(rs1)
+        rs2 = self._get_register_index(rs2)
+        imm = self._get_imm(imm)
+
+        if self.cpu.registers[rs1] != self.cpu.registers[rs2]:
+            self.pc = imm
+        else:
+            self._increment_pc()
+
+    def _jal(self, rd: str, imm: str):
+        rd = self._get_register_index(rd)
+        self.cpu.registers[rd] = Word(dez=self._get_pc() + 4)
+
+        imm = self._get_imm(imm)
+        self._increment_pc(imm)
