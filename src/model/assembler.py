@@ -5,7 +5,8 @@ from colorama import Fore
 import re
 
 LABEL_REGEX: str = re.compile(
-    r"^[a-zA-Z_.][a-zA-Z0-9_]*:$"  # (sum:, end:, ...)
+    r"^[a-zA-Z_.][a-zA-Z0-9_]*:"  # (sum:, end:, ...)
+    r"\s*(?:#.*)?$" # comment (optional)
 )
 
 INSTRUCTION_REGEX: str = re.compile(
@@ -37,7 +38,11 @@ class Assembler:
         logger.info(f"{Fore.CYAN}PARSE LABELS{Fore.RESET}")
         for idx, line in enumerate(programm):
             line = line.strip()
-            if re.match(LABEL_REGEX, line):
+            match = re.match(LABEL_REGEX, line)
+            if match:
+                line = line.strip()
+                if "#" in line:
+                    line = line.split("#", 1)[0].strip()
                 line = line.removesuffix(":")
                 if any(line == label for (label, _) in self.symbol_table.values()):
                     raise ValueError(
