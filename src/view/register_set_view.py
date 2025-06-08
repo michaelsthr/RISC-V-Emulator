@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QIcon, QColor, QFont, QPixmap, QPainter
 from PySide6.QtCore import Qt
 
-from model.register_set import RegisterSet
+from src.model.register_set import RegisterSet
 
 
 class RegisterSetView(QTableWidget):

@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING
 from loguru import logger
 
-from .register_set import RegisterSet
 from .word import Word
 
 if TYPE_CHECKING:

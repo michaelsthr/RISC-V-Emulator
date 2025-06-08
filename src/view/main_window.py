@@ -10,8 +10,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QAction
 
-from model.register_set import RegisterSet
 from .editor_view import Editor
+from src.model.register_set import RegisterSet
 from .register_set_view import RegisterSetView
 from .file_loader_view import FileLoader
 from .terminal_view import Terminal
