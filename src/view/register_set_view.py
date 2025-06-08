@@ -3,28 +3,40 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QHeaderView,
     QAbstractItemView,
+    QVBoxLayout,
+    QLabel, 
+    QWidget
 )
-from PySide6.QtGui import QIcon, QColor, QFont, QPixmap, QPainter
+from PySide6.QtGui import QColor, QFont, QPixmap, QPainter
 from PySide6.QtCore import Qt
 
 from src.model.register_set import RegisterSet
 
 
-class RegisterSetView(QTableWidget):
+class RegisterSetView(QWidget):
     FONT = "PT Mono"
 
     def __init__(self, register_set: RegisterSet):
         super().__init__()
+
+        layout = QVBoxLayout(self)
+        label = QLabel("REGISTER SET")
+        label.setFont(QFont("PT Mono", 16, QFont.Bold))
+        layout.addWidget(label)
+
+        self.table = QTableWidget()
+        layout.addWidget(self.table)
+
         # font
         font = QFont("PT Mono")
         font.setPixelSize(16)
-        self.setFont(font)
+        self.table.setFont(font)
 
         # table setup
-        self.setColumnCount(4)
+        self.table.setColumnCount(4)
         headers = ["Reg", "Base2", "Base10", "Base16"]
-        self.setHorizontalHeaderLabels(headers)
-        header: QHeaderView = self.horizontalHeader()
+        self.table.setHorizontalHeaderLabels(headers)
+        header: QHeaderView = self.table.horizontalHeader()
         header.setFont(self.FONT)
 
         # Interactive               = ...  # 0x0
@@ -34,9 +46,9 @@ class RegisterSetView(QTableWidget):
         # ResizeToContents          = ...  # 0x3
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
 
-        self.verticalHeader().setVisible(False)
-        self.setShowGrid(False)
-        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.verticalHeader().setVisible(False)
+        self.table.setShowGrid(False)
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.align_left_vcenter = (
             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
@@ -45,7 +57,7 @@ class RegisterSetView(QTableWidget):
 
     def update_registers(self, registers: RegisterSet):
         len_reg = len(registers)
-        self.setRowCount(len_reg)
+        self.table.setRowCount(len_reg)
         for idx in range(len_reg):
             word = registers[idx]
 
@@ -57,27 +69,27 @@ class RegisterSetView(QTableWidget):
             name_item.setFont(self.FONT)
             # name_item.setIcon(icon)
             name_item.setTextAlignment(self.align_left_vcenter)
-            self.setItem(idx, 0, name_item)
+            self.table.setItem(idx, 0, name_item)
 
             # binary
             bin_item = QTableWidgetItem(word.bin)
             bin_item.setFont(self.FONT)
             bin_item.setTextAlignment(self.align_left_vcenter)
-            self.setItem(idx, 1, bin_item)
+            self.table.setItem(idx, 1, bin_item)
 
             # decimal
             dec_item = QTableWidgetItem(str(word.dez))
             dec_item.setFont(self.FONT)
             dec_item.setTextAlignment(self.align_left_vcenter)
-            self.setItem(idx, 2, dec_item)
+            self.table.setItem(idx, 2, dec_item)
 
             # hex
             hex_item = QTableWidgetItem(word.hex)
             hex_item.setFont(self.FONT)
             hex_item.setTextAlignment(self.align_left_vcenter)
-            self.setItem(idx, 3, hex_item)
+            self.table.setItem(idx, 3, hex_item)
 
-            self.setRowHeight(idx, 1)
+            self.table.setRowHeight(idx, 1)
 
     # obsolete
     def get_pixmap(self, idx: int) -> QPixmap:

@@ -3,6 +3,9 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QHeaderView,
     QAbstractItemView,
+    QLabel,
+    QVBoxLayout,
+    QWidget,
 )
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
@@ -11,22 +14,30 @@ from loguru import logger
 from src.model.ram import RAM
 
 
-class RAMView(QTableWidget):
+class RAMView(QWidget):
     FONT = "PT Mono"
 
     def __init__(self, ram: RAM):
         super().__init__()
+
+        layout = QVBoxLayout(self)
+        label = QLabel("RAM")
+        label.setFont(QFont("PT Mono", 16, QFont.Bold))
+        layout.addWidget(label)
+
+        self.table_widget = QTableWidget()
+        layout.addWidget(self.table_widget)
+
         # font
         font = QFont("PT Mono")
-
         font.setPixelSize(16)
-        self.setFont(font)
+        self.table_widget.setFont(font)
 
         # table setup
-        self.setColumnCount(4)
+        self.table_widget.setColumnCount(4)
         headers = ["Reg", "Base2", "Base10", "Base16"]
-        self.setHorizontalHeaderLabels(headers)
-        header: QHeaderView = self.horizontalHeader()
+        self.table_widget.setHorizontalHeaderLabels(headers)
+        header: QHeaderView = self.table_widget.horizontalHeader()
         header.setFont(self.FONT)
 
         # Interactive               = ...  # 0x0
@@ -36,9 +47,9 @@ class RAMView(QTableWidget):
         # ResizeToContents          = ...  # 0x3
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
 
-        self.verticalHeader().setVisible(False)
-        self.setShowGrid(False)
-        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget.verticalHeader().setVisible(False)
+        self.table_widget.setShowGrid(False)
+        self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.align_left_vcenter = (
             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
@@ -47,30 +58,30 @@ class RAMView(QTableWidget):
 
     def update_registers(self, ram: RAM):
         len_reg = len(ram)
-        self.setRowCount(len_reg)
+        self.table_widget.setRowCount(len_reg)
         for idx, (adress, word) in enumerate(list(ram.items())):
             # register name
             name_item = QTableWidgetItem(f"x{adress}")
             name_item.setFont(self.FONT)
             name_item.setTextAlignment(self.align_left_vcenter)
-            self.setItem(idx, 0, name_item)
+            self.table_widget.setItem(idx, 0, name_item)
 
             # binary
             bin_item = QTableWidgetItem(word.bin)
             bin_item.setFont(self.FONT)
             bin_item.setTextAlignment(self.align_left_vcenter)
-            self.setItem(idx, 1, bin_item)
+            self.table_widget.setItem(idx, 1, bin_item)
 
             # decimal
             dec_item = QTableWidgetItem(str(word.dez))
             dec_item.setFont(self.FONT)
             dec_item.setTextAlignment(self.align_left_vcenter)
-            self.setItem(idx, 2, dec_item)
+            self.table_widget.setItem(idx, 2, dec_item)
 
             # hex
             hex_item = QTableWidgetItem(word.hex)
             hex_item.setFont(self.FONT)
             hex_item.setTextAlignment(self.align_left_vcenter)
-            self.setItem(idx, 3, hex_item)
+            self.table_widget.setItem(idx, 3, hex_item)
 
-            self.setRowHeight(idx, 1)
+            self.table_widget.setRowHeight(idx, 1)
