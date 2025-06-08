@@ -4,6 +4,10 @@ from loguru import logger
 from colorama import Fore
 import re
 
+COMMENT_REGEX: str = re.compile(
+    r"\s*#+"
+)
+
 LABEL_REGEX: str = re.compile(
     r"^[a-zA-Z_.][a-zA-Z0-9_]*:"  # (sum:, end:, ...)
     r"\s*(?:#.*)?$" # comment (optional)
@@ -13,9 +17,9 @@ INSTRUCTION_REGEX: str = re.compile(
     r"^\s*"  # Begin, optional space
     r"([a-z]+)"  # Opcode (addi, beq, ...)
     r"\s+"  # Space
-    r"(?:([x]\d+|\S+))?"  # 1. operand (optional)
-    r"(?:\s*,\s*([x]\d+|\S+))?"  # 2. operand (optional)
-    r"(?:\s*,\s*([x]\d+|\S+))?"  # 3. operand (optional)
+    r"(?:([x]\d+|\d+\([a-zA-Z0-9]+\)|\S+))?"  # 1. operand (optional) - now includes e.g. 0(ra)
+    r"(?:\s*,\s*([x]\d+|\d+\([a-zA-Z0-9]+\)|\S+))?"  # 2. operand (optional)
+    r"(?:\s*,\s*([x]\d+|\d+\([a-zA-Z0-9]+\)|\S+))?"  # 3. operand (optional)
     r"\s*(?:#.*)?$"  # comment (optional)
 )
 
@@ -38,6 +42,8 @@ class Assembler:
         logger.info(f"{Fore.CYAN}PARSE LABELS{Fore.RESET}")
         for idx, line in enumerate(programm):
             line = line.strip()
+            if re.match(COMMENT_REGEX, line):
+                continue
             match = re.match(LABEL_REGEX, line)
             if match:
                 line = line.strip()
@@ -60,6 +66,8 @@ class Assembler:
         logger.info(f"{Fore.CYAN}PARSE INSTRUCIONS{Fore.RESET}")
         for idx, line in enumerate(programm):
             line = line.strip()
+            if re.match(COMMENT_REGEX, line):
+                continue
             if re.match(LABEL_REGEX, line):
                 continue
             logger.info(f"  BEFORE: {idx}-->{line}")

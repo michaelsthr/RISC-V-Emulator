@@ -26,6 +26,9 @@ class InstructionExec:
     
     def _set_pc(self, value: int):
         return self.cpu.set_pc(value)
+    
+    def _get_base_offset(self, base_offset: str):
+        return self.cpu.get_base_offset(base_offset)
 
     # --- INSTRUCTIONS ---
 
@@ -122,11 +125,21 @@ class InstructionExec:
 
     def _jal(self, rd: str, imm: str):
         rd = self._get_register_index(rd)
-        self.cpu.registers[rd] = Word(dez=self._get_pc() + 4)
+        self.cpu.registers[rd] = Word(dez=self._get_pc())
 
         imm = self._get_imm(imm)
-        self._increment_pc(imm)
+        self._set_pc(imm)
 
     def _j(self, imm: str):
         imm = self._get_imm(imm)
         self._set_pc(imm)
+    
+    def _jalr(self, rd: str, rs1_imm: str):
+        rd = self._get_register_index(rd)
+        base, offset = self._get_base_offset(rs1_imm)
+
+        self.cpu.registers[rd] = Word(dez=self._get_pc() + 4)
+        base_value: Word = self.cpu.registers[base]
+
+
+        self._set_pc(base_value.dez + offset)

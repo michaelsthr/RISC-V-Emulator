@@ -2,6 +2,7 @@ from traceback import format_exc
 from typing import Dict, List, Tuple
 from loguru import logger
 from colorama import Fore
+import re
 
 
 from .word import Word
@@ -120,6 +121,14 @@ class CPU:
             return int(imm)
         except ValueError:
             raise ValueError(f"You can't get imm with following value: {imm}")
+        
+    def get_base_offset(self, base_offset: str) -> Tuple[int, int]:
+        match = re.match(r"(-?\d+)\(([xX]\d+)\)", base_offset)
+        if not match:
+            return None
+        offset = int(match.group(1))
+        base = int(match.group(2).removeprefix("x"))
+        return base, offset
 
     @property
     def registers(self) -> list[Word]:

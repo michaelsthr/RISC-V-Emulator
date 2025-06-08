@@ -28,6 +28,8 @@
 ## Jump and Function
 
 - j
+- jal
+- jalr
 
 
 ### Load and Store
@@ -35,3 +37,4 @@
 
 ### Known bugs:
 - If the editor wraps the text, blocks not parsed well
+- \n are not recognized
