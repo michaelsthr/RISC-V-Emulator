@@ -150,3 +150,10 @@ class InstructionExec:
 
         self.cpu.registers[rd_idx] = Word(dez=imm << 12)
         self._increment_pc()
+
+    def _auipc(self, rd: str, imm: str):
+        rd_idx = self._get_register_index(rd)
+        imm = self._get_imm(imm)
+
+        self.cpu.registers[rd_idx] = Word(dez=self._get_pc() + imm << 12)
+        self._increment_pc()

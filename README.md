@@ -19,6 +19,8 @@
 ### Load Immediate
 
 - li
+- lui
+- auipc
 
 ### Branch
 
