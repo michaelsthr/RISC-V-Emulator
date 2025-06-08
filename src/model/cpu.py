@@ -133,3 +133,7 @@ class CPU:
     @property
     def register_set(self) -> list[Word]:
         return self._register_set
+    
+    @property
+    def ram(self) -> RAM:
+        return self._ram

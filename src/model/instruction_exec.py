@@ -165,3 +165,23 @@ class InstructionExec:
 
         self.cpu.register_set[rd_idx] = Word(dez=self._get_pc() + imm << 12)
         self._increment_pc()
+
+    def _lw(self, rd: str, rs1_imm: str):
+        rd = self._get_register_index(rd)
+        base, offset = self._get_base_offset(rs1_imm)
+
+        base_val = self.cpu.register_set[base].base10
+
+        self.cpu.register_set[rd] = self.cpu.ram[base_val + offset]
+        self._increment_pc()
+        logger.info(f"  >> x{rd} = {self.cpu.ram[base_val + offset].base10}")
+
+    def _sw(self, rd: str, rs1_imm: str):
+        rd = self._get_register_index(rd)
+        base, offset = self._get_base_offset(rs1_imm)
+
+        base_val = self.cpu.register_set[base].base10
+
+        self.cpu.ram[base_val + offset] = self.cpu.register_set[rd]
+        self._increment_pc()
+        logger.info(f"  >> {self.cpu._ram}")

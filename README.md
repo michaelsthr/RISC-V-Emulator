@@ -36,7 +36,11 @@
 
 ### Load and Store
 
+- lw
+- sw
+
 
 ### Known bugs:
 - If the editor wraps the text, blocks not parsed well
 - \n are not recognized
+- offset not working properly (should be multiple of 4)
