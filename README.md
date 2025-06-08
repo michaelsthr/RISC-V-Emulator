@@ -25,6 +25,10 @@
 - beq
 - bne
 
+## Jump and Function
+
+- j
+
 
 ### Load and Store
 

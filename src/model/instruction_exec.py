@@ -23,6 +23,9 @@ class InstructionExec:
 
     def _get_pc(self):
         return self.cpu.get_pc()
+    
+    def _set_pc(self, value: int):
+        return self.cpu.set_pc(value)
 
     # --- INSTRUCTIONS ---
 
@@ -123,3 +126,7 @@ class InstructionExec:
 
         imm = self._get_imm(imm)
         self._increment_pc(imm)
+
+    def _j(self, imm: str):
+        imm = self._get_imm(imm)
+        self._set_pc(imm)

@@ -73,7 +73,7 @@ class CPU:
         try:
             logger.info(f"\n{Fore.MAGENTA}> RUN INSTRUCTION{Fore.RESET}")
             logger.info(f"  >> OLD PC={self.get_pc()}")
-            logger.info(f"  >> {function}({args})")
+            logger.info(f"  >> {function}{args}")
 
             # run specific function
             method = getattr(self.instruction_exec, f"_{function}")
@@ -111,6 +111,9 @@ class CPU:
 
     def increment_pc(self, amount: int = 4):
         self.pc += amount
+
+    def set_pc(self, value: int):
+        self.pc = value
 
     def get_imm(self, imm: str):
         try:

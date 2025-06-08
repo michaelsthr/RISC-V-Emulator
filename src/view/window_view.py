@@ -22,7 +22,7 @@ class Window(QMainWindow):
     MENU_FILE = "File"
     MENU_OPEN_FILE = "Open File"
     RUN_PROGRAMM = "Run programm"
-    NEXT_INSTRUCTION = "Next instruction"
+    NEXT_INSTRUCTION = "Run instruction"
 
     def __init__(self):
         super().__init__()
