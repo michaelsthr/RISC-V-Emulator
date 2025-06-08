@@ -4,6 +4,7 @@ from colorama import Fore
 
 from .word import Word
 
+
 class RAM:
     def __init__(self, max_size: int, word_size: int = 32):
         self._register_set: Dict[int, Word] = {}
@@ -22,9 +23,11 @@ class RAM:
         if key < 0:
             logger.info(f"{Fore.LIGHTRED_EX}Index {key} is smaller than 0")
             raise
-        
+
         if key >= self.max_size:
-            logger.info(f"{Fore.LIGHTRED_EX}Index {key} is greater than {self.max_size}")
+            logger.info(
+                f"{Fore.LIGHTRED_EX}Index {key} is greater than {self.max_size}"
+            )
             raise
 
         if key not in self._register_set.keys():
@@ -37,7 +40,10 @@ class RAM:
 
     def __len__(self):
         return len(self._register_set)
-    
+
+    def items(self):
+        return self._register_set.items()
+
     def get_max_size(self) -> int:
         return self.max_size
 

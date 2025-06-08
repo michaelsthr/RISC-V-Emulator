@@ -4,19 +4,21 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QAbstractItemView,
 )
-from PySide6.QtGui import QIcon, QColor, QFont, QPixmap, QPainter
+from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
+from loguru import logger
 
-from src.model.register_set import RegisterSet
+from src.model.ram import RAM
 
 
-class RegisterSetView(QTableWidget):
+class RAMView(QTableWidget):
     FONT = "PT Mono"
 
-    def __init__(self, register_set: RegisterSet):
+    def __init__(self, ram: RAM):
         super().__init__()
         # font
         font = QFont("PT Mono")
+
         font.setPixelSize(16)
         self.setFont(font)
 
@@ -41,21 +43,15 @@ class RegisterSetView(QTableWidget):
         self.align_left_vcenter = (
             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
         )
-        self.update_registers(register_set)
+        self.update_registers(ram)
 
-    def update_registers(self, registers: RegisterSet):
-        len_reg = len(registers)
+    def update_registers(self, ram: RAM):
+        len_reg = len(ram)
         self.setRowCount(len_reg)
-        for idx in range(len_reg):
-            word = registers[idx]
-
-            # pixmap = self.get_pixmap(idx)
-            # icon = QIcon(pixmap)
-
+        for idx, (adress, word) in enumerate(list(ram.items())):
             # register name
-            name_item = QTableWidgetItem(f"x{idx}")
+            name_item = QTableWidgetItem(f"x{adress}")
             name_item.setFont(self.FONT)
-            # name_item.setIcon(icon)
             name_item.setTextAlignment(self.align_left_vcenter)
             self.setItem(idx, 0, name_item)
 
@@ -78,16 +74,3 @@ class RegisterSetView(QTableWidget):
             self.setItem(idx, 3, hex_item)
 
             self.setRowHeight(idx, 1)
-
-    # obsolete
-    def get_pixmap(self, idx: int) -> QPixmap:
-        pixmap = QPixmap(32, 32)
-        pixmap.fill(QColor(32, 33, 36, 255))
-        painter = QPainter(pixmap)
-        painter.setPen(QColor(82, 178, 220))
-        font = painter.font()
-        font.setPixelSize(20)
-        painter.setFont(font)
-        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignLeft, f"x{idx}")
-        painter.end()
-        return pixmap

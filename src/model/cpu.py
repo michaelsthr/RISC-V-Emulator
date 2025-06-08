@@ -36,6 +36,7 @@ class CPU:
 
         registers_size = len(self._register_set)
         self._register_set = RegisterSet(size=registers_size)
+        self._ram = RAM(max_size=2**32)
 
     def load_programm(
         self, programm: Dict[int, str]

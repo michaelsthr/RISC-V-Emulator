@@ -27,7 +27,7 @@ class Controller:
 
     def _init_view(self):
         self.window = Window()
-        self.window._init_ui(registers=self.cpu._register_set)
+        self.window._init_ui(register_set=self.cpu._register_set, ram=self.cpu.ram)
         self.window.show()
 
     def _connect_view(self):
@@ -64,5 +64,4 @@ class Controller:
         else:
             self.window.move_debug_cursor(line_number=origin_line_number)
 
-        registers = self.cpu.register_set
-        self.window.update_registers(registers)
+        self.window.update_registers(registers=self.cpu.register_set, ram=self.cpu.ram)

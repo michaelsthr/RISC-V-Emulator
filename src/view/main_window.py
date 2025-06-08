@@ -1,17 +1,12 @@
 from typing import Dict
-from PySide6.QtWidgets import (
-    QMainWindow,
-    QWidget,
-    QGridLayout,
-    QMenuBar,
-    QToolBar,
-    QFontComboBox,
-    QHBoxLayout,
-)
+from PySide6.QtWidgets import QMainWindow, QWidget, QGridLayout, QMenuBar, QToolBar
 from PySide6.QtGui import QAction
 
-from .editor_view import Editor
+from src.model.ram import RAM
 from src.model.register_set import RegisterSet
+
+from .editor_view import Editor
+from .ram_view import RAMView
 from .register_set_view import RegisterSetView
 from .file_loader_view import FileLoader
 from .terminal_view import Terminal
@@ -29,7 +24,7 @@ class Window(QMainWindow):
         self.setWindowTitle(self.WINDOW_TITLE)
         self.file_loader = FileLoader(self)
 
-    def _init_ui(self, registers: RegisterSet):
+    def _init_ui(self, register_set: RegisterSet, ram: RAM):
         ### Menu Bar ###
         menu_bar = QMenuBar(self)
         file_menu = menu_bar.addMenu(self.MENU_FILE)
@@ -54,14 +49,18 @@ class Window(QMainWindow):
 
         ### Main Layout
         self.editor = Editor()
-        self.register_set_view = RegisterSetView(registers=registers)
+        self.register_set_view = RegisterSetView(register_set=register_set)
+        self.ram_view = RAMView(ram=ram)
         self.terminal = Terminal()
         main_layout = QGridLayout()
-        main_layout.addWidget(self.editor, 0, 0, 2, 1)
+        main_layout.addWidget(self.editor, 0, 0)
+        main_layout.addWidget(self.terminal, 1, 0)
         main_layout.addWidget(self.register_set_view, 0, 1)
-        main_layout.addWidget(self.terminal, 1, 1)
+        main_layout.addWidget(self.ram_view, 1, 1)
         main_layout.setColumnStretch(0, 10)
         main_layout.setColumnStretch(1, 8)
+        main_layout.setRowStretch(0, 2)
+        main_layout.setRowStretch(1, 1)
 
         main_widget = QWidget()
         main_widget.setLayout(main_layout)
@@ -81,8 +80,9 @@ class Window(QMainWindow):
     def move_debug_cursor(self, line_number):
         self.editor.move_cursor(line_number)
 
-    def update_registers(self, registers: RegisterSet):
+    def update_registers(self, registers: RegisterSet, ram: RAM):
         self.register_set_view.update_registers(registers=registers)
+        self.ram_view.update_registers(ram=ram)
 
     def finish_debug_cursor(self):
         self.editor.finish_debug_cursor()
