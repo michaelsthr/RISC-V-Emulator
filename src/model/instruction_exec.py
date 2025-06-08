@@ -143,3 +143,10 @@ class InstructionExec:
 
 
         self._set_pc(base_value.dez + offset)
+
+    def _lui(self, rd: str, imm: str):
+        rd_idx = self._get_register_index(rd)
+        imm = self._get_imm(imm)
+
+        self.cpu.registers[rd_idx] = Word(dez=imm << 12)
+        self._increment_pc()
