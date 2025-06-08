@@ -9,13 +9,17 @@ from .word import Word
 from .register_set import RegisterSet
 from .assembler import Assembler
 from .instruction_exec import InstructionExec
+from .ram import RAM
 
 
 class CPU:
     def __init__(self, registers_size=32):
         self.assembler = Assembler()
         self._register_set = RegisterSet(size=registers_size)
+        self._ram = RAM(2**registers_size)
+        self.instruction_exec = InstructionExec(self)
 
+        # --obsolete-- > We increment by 4 already
         # I know, the programm counter is normally in the Register
         # Fortunately i`m creating only a simulator :)
         # And i also know, the programm counter increments by four,
@@ -24,7 +28,6 @@ class CPU:
         self.pc: int = 0
 
         self.instructions: Dict[int, Tuple[List[str], int]] = {}
-        self.instruction_exec = InstructionExec(self)
 
     def reset(self):
         self.assembler = Assembler()
