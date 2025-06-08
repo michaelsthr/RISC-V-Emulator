@@ -6,7 +6,7 @@ import re
 
 
 from .word import Word
-from .register import Registers
+from .register_set import RegisterSet
 from .assembler import Assembler
 from .instruction_exec import InstructionExec
 
@@ -14,7 +14,7 @@ from .instruction_exec import InstructionExec
 class CPU:
     def __init__(self, registers_size=32):
         self.assembler = Assembler()
-        self._registers = Registers(size=registers_size)
+        self._register_set = RegisterSet(size=registers_size)
 
         # I know, the programm counter is normally in the Register
         # Fortunately i`m creating only a simulator :)
@@ -31,8 +31,8 @@ class CPU:
         self.pc = 0
         self.instructions = {}
 
-        registers_size = len(self._registers)
-        self._registers = Registers(size=registers_size)
+        registers_size = len(self._register_set)
+        self._register_set = RegisterSet(size=registers_size)
 
     def load_programm(
         self, programm: Dict[int, str]
@@ -96,9 +96,6 @@ class CPU:
                 f"You can't run instruction with following values: {r}. This is the preferred scheme: 'x1'"
             )
 
-    def get_registers(self) -> Registers:
-        return self._registers
-
     def get_pc(self) -> int:
         return self.pc
 
@@ -121,7 +118,7 @@ class CPU:
             return int(imm)
         except ValueError:
             raise ValueError(f"You can't get imm with following value: {imm}")
-        
+
     def get_base_offset(self, base_offset: str) -> Tuple[int, int]:
         match = re.match(r"(-?\d+)\(([xX]\d+)\)", base_offset)
         if not match:
@@ -131,5 +128,5 @@ class CPU:
         return base, offset
 
     @property
-    def registers(self) -> list[Word]:
-        return self._registers
+    def register_set(self) -> list[Word]:
+        return self._register_set

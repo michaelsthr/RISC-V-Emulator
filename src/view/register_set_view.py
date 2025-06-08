@@ -7,14 +7,13 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QIcon, QColor, QFont, QPixmap, QPainter
 from PySide6.QtCore import Qt
 
-from src.model.register import Registers
+from model.register_set import RegisterSet
 
 
-class RegisterView(QTableWidget):
-
+class RegisterSetView(QTableWidget):
     FONT = "PT Mono"
 
-    def __init__(self, registers: Registers):
+    def __init__(self, registers: RegisterSet):
         super().__init__()
         # font
         font = QFont("PT Mono")
@@ -39,10 +38,12 @@ class RegisterView(QTableWidget):
         self.setShowGrid(False)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        self.align_left_vcenter = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+        self.align_left_vcenter = (
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+        )
         self.update_registers(registers)
 
-    def update_registers(self, registers: Registers):
+    def update_registers(self, registers: RegisterSet):
         len_reg = len(registers)
         self.setRowCount(len_reg)
         for idx in range(len_reg):

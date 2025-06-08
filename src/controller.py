@@ -7,7 +7,7 @@ from colorama import Fore
 from loguru import logger
 
 from .model.cpu import CPU
-from .view.window_view import Window
+from .view.main_window import Window
 
 
 class Controller:
@@ -27,7 +27,7 @@ class Controller:
 
     def _init_view(self):
         self.window = Window()
-        self.window._init_ui(registers=self.cpu._registers)
+        self.window._init_ui(registers=self.cpu._register_set)
         self.window.show()
 
     def _connect_view(self):
@@ -57,10 +57,12 @@ class Controller:
         pc = self.cpu.get_pc()
         origin_line_number = self.cpu.get_current_origin_line_number()
         if origin_line_number == "END":
-            logger.info(f"\n{Fore.GREEN}END OF FILE REACHED | FINISHING DEBUGGING{Fore.RESET}")
+            logger.info(
+                f"\n{Fore.GREEN}END OF FILE REACHED | FINISHING DEBUGGING{Fore.RESET}"
+            )
             self.window.finish_debug_cursor()
         else:
             self.window.move_debug_cursor(line_number=origin_line_number)
 
-        registers = self.cpu.get_registers()
+        registers = self.cpu.register_set
         self.window.update_registers(registers)
