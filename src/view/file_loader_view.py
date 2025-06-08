@@ -21,7 +21,7 @@ class FileLoader:
         dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
         dialog.setViewMode(QFileDialog.ViewMode.List)
         # TODO: change filter
-        dialog.setNameFilter("Text (*.txt)")
+        # dialog.setNameFilter("Text (*.txt)")
         if dialog.exec():
             filenames = dialog.selectedFiles()
             return self.read_file(str(Path(filenames[0])))
