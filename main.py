@@ -1,10 +1,8 @@
 from PySide6.QtWidgets import QApplication
-
+import qdarktheme
 import sys
 
-import qdarktheme
 from src.controller import Controller
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

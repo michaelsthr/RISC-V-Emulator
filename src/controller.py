@@ -32,26 +32,22 @@ class Controller:
         self.window.next_instruction.triggered.connect(self.run_next_instruction)
 
     def start_programm(self):
-        logger.info("Run Programm")
         self.cpu.reset()
         self.window.reset()
+
         # I know, the nested types are horrendous ...
         # I'm sorry for this :(
-
-        # load programm to cpu
+        # Either way: load programm to cpu
         # Maps: original_line number and the value
         programm: Dict[int, str] = self.window.get_programm()
-
         self.cpu.load_programm(programm)
-
         self.update_ui()
 
-    def run_next_instruction(self):
+    def run_next_instruction(self): 
         self.cpu.run_next_instruction()
         self.update_ui()
 
     def update_ui(self):
-        pc = self.cpu.get_pc()
         origin_line_number = self.cpu.get_current_origin_line_number()
         if origin_line_number == "END":
             logger.info(

@@ -38,7 +38,7 @@ class Editor(QWidget):
         cursor.setPosition(block_pos)
         self.editor.setTextCursor(cursor)
 
-        self._highlight_block(color="darkorange")
+        self._highlight_block(color="darkslategray")
 
     def _highlight_block(self, color: str):
         extra_selection = QTextEdit.ExtraSelection()
