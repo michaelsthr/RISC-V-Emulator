@@ -1,4 +1,3 @@
-from loguru import logger
 from PySide6.QtWidgets import QApplication
 
 import sys

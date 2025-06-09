@@ -1,4 +1,3 @@
-import pprint
 from typing import Dict, List, Tuple
 from loguru import logger
 from colorama import Fore

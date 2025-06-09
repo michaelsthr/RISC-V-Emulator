@@ -1,8 +1,5 @@
-from pprint import pprint
 import sys
-from typing import Dict, List
-from PySide6.QtWidgets import QApplication
-import qdarktheme
+from typing import Dict
 from colorama import Fore
 from loguru import logger
 
