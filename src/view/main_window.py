@@ -10,6 +10,7 @@ from .ram_view import RAMView
 from .register_set_view import RegisterSetView
 from .file_loader_view import FileLoader
 from .terminal_view import Terminal
+from .label import Label
 
 
 class Window(QMainWindow):
@@ -52,11 +53,17 @@ class Window(QMainWindow):
         self.register_set_view = RegisterSetView(register_set=register_set)
         self.ram_view = RAMView(ram=ram)
         self.terminal = Terminal()
+        self.pc_label = Label(heading="PC", init_value=str(0))
+        self.cpi_label = Label(heading="CLOCKS", init_value=str(0))
+
         main_layout = QGridLayout()
         main_layout.addWidget(self.editor, 0, 0)
         main_layout.addWidget(self.terminal, 1, 0)
         main_layout.addWidget(self.register_set_view, 0, 1)
         main_layout.addWidget(self.ram_view, 1, 1)
+        # main_layout.addWidget(self.pc_label, 2, 0)
+        # main_layout.addWidget(self.cpi_label, 2, 1)
+
         main_layout.setColumnStretch(0, 10)
         main_layout.setColumnStretch(1, 8)
         main_layout.setRowStretch(0, 2)

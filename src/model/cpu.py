@@ -5,6 +5,7 @@ from colorama import Fore
 import re
 
 
+from src.config import FREQUENCY
 from .word import Word
 from .register_set import RegisterSet
 from .assembler import Assembler
@@ -14,10 +15,18 @@ from .ram import RAM
 
 class CPU:
     def __init__(self, registers_size=32):
+        self._initial_registers_size = registers_size
         self.assembler = Assembler()
         self._register_set = RegisterSet(size=registers_size)
         self._ram = RAM(2**registers_size)
         self.instruction_exec = InstructionExec(self)
+
+        self.pc: int = 0
+        self.clock: int = 0
+        self.instruction_count: int = 0
+        self.frequency = FREQUENCY
+        self.running_time = 0
+        self.performance = 0
 
         # --obsolete-- > We increment by 4 already
         # I know, the programm counter is normally in the Register
@@ -25,18 +34,10 @@ class CPU:
         # And i also know, the programm counter increments by four,
         # because the instructions are four bytes long
         # We increment by one ;)
-        self.pc: int = 0
-
         self.instructions: Dict[int, Tuple[List[str], int]] = {}
 
     def reset(self):
-        self.assembler = Assembler()
-        self.pc = 0
-        self.instructions = {}
-
-        registers_size = len(self._register_set)
-        self._register_set = RegisterSet(size=registers_size)
-        self._ram = RAM(max_size=2**32)
+        self.__init__(registers_size=self._initial_registers_size)
 
     def load_programm(
         self, programm: Dict[int, str]
@@ -77,20 +78,42 @@ class CPU:
 
         try:
             logger.info(f"\n{Fore.MAGENTA}> RUN INSTRUCTION{Fore.RESET}")
-            logger.info(f"  >> OLD PC={self.get_pc()}")
+            logger.info(f"  >> OLD PC = {self.get_pc()}")
             logger.info(f"  >> {function}{args}")
 
             # run specific function
             method = getattr(self.instruction_exec, f"_{function}")
             method(*args)
 
-            logger.info(f"  >> NEW PC={self.get_pc()}")
+            self.instruction_count += 1
+            self.avg_cpi = self.compute_avg_cpi(self.instruction_count, self.clock)
+            self.running_time = self.compute_running_time(
+                self.get_clock(), self.frequency
+            )
+            self.performance = self.compute_performance(self.running_time)
+
+            logger.info(f"  >> NEW PC = {self.get_pc()}")
+            logger.info(f"  >> CLOCK CYCLE = {self.get_clock()}")
+            logger.info(f"  >> AVG CPI = {self.avg_cpi}")
+
         except AttributeError as e:
             logger.error(f"Instruction is not defined: {e}, {format_exc()}")
         except TypeError as e:
             logger.error(f"Invalid arguments for instruction: {e}, {format_exc()}")
         except Exception as ex:
             logger.error(f"{ex}, {format_exc()}")
+
+    def compute_avg_cpi(self, instruction_count: int, clock: int) -> float:
+        result = clock / instruction_count
+        return round(result, 2)
+
+    def compute_running_time(self, instruction_count: int, frequency: float) -> float:
+        result = instruction_count / frequency
+        return round(result, 2)
+
+    def compute_performance(self, frequency: float) -> float:
+        result = 1 / frequency
+        return round(result, 2)
 
     def get_register_index(self, r: str):
         try:
@@ -102,6 +125,12 @@ class CPU:
 
     def get_pc(self) -> int:
         return self.pc
+
+    def get_clock(self) -> int:
+        return self.clock
+
+    def get_avg_cpi(self) -> float:
+        return self.avg_cpi
 
     def get_current_origin_line_number(self):
         # reversed() is important!
@@ -116,6 +145,9 @@ class CPU:
 
     def set_pc(self, value: int):
         self.pc = value
+
+    def increment_clock(self, value: int):
+        self.clock += value
 
     def get_imm(self, imm: str):
         try:
@@ -134,7 +166,7 @@ class CPU:
     @property
     def register_set(self) -> list[Word]:
         return self._register_set
-    
+
     @property
     def ram(self) -> RAM:
         return self._ram

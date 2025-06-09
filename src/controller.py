@@ -41,20 +41,40 @@ class Controller:
         # Maps: original_line number and the value
         programm: Dict[int, str] = self.window.get_programm()
         self.cpu.load_programm(programm)
-        self.update_ui()
+
+        origin_line_number = self.cpu.get_current_origin_line_number()
+
+        if self.end_reached(origin_line_number):
+            self.finish_process()
+            return
+
+        self.update_ui(origin_line_number)
 
     def run_next_instruction(self): 
         self.cpu.run_next_instruction()
-        self.update_ui()
-
-    def update_ui(self):
         origin_line_number = self.cpu.get_current_origin_line_number()
-        if origin_line_number == "END":
-            logger.info(
-                f"\n{Fore.GREEN}END OF FILE REACHED | FINISHING DEBUGGING{Fore.RESET}"
-            )
-            self.window.finish_debug_cursor()
-        else:
-            self.window.move_debug_cursor(line_number=origin_line_number)
 
+        if self.end_reached(origin_line_number):
+            self.finish_process()
+            return
+
+        self.update_ui(origin_line_number)
+
+    def end_reached(self, line):
+        if line == "END":
+            return True
+        return False
+    
+    def finish_process(self):
+        logger.info(f"\n{Fore.GREEN}END OF FILE REACHED | FINISHING DEBUGGING{Fore.RESET}")
+        logger.info(f"\n{Fore.CYAN}PERFORMANCE REVIEW{Fore.RESET}")
+        logger.info(f"  -> CLOCK CYCLES = {self.cpu.get_clock()}")
+        logger.info(f"  -> AVG CPI = {self.cpu.get_avg_cpi()}")
+        logger.info(f"  -> RUNNING TIME = {self.cpu.running_time}")
+        logger.info(f"  -> PERFORMANCE = {self.cpu.performance}")
+        self.window.finish_debug_cursor()
+        self.window.update_registers(registers=self.cpu.register_set, ram=self.cpu.ram)
+
+    def update_ui(self, line_number):
+        self.window.move_debug_cursor(line_number=line_number)
         self.window.update_registers(registers=self.cpu.register_set, ram=self.cpu.ram)
