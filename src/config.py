@@ -15,6 +15,7 @@ CPI_VALUES = {
     "jal": 2,
     "j": 1,
     "jalr": 2,
+    "slt": 1, 
     "lui": 1,
     "auipc": 1,
     "lw": 2,

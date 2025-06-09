@@ -40,6 +40,13 @@ class Word:
     
     def __ne__(self, word: "Word") -> bool:
         return self.base10 != word.base10
+    
+    def __lt__(self, word: "Word") -> bool:
+        return self.base10 < word.base10
+    
+    def __lshift__(self, word: "Word") -> "Word":
+        res_base10 = self.base10 << word.base10
+        return Word(res_base10)
 
     def set_bit_at_index(self, idx: int, value: str) -> str:
         self.bits[idx] = value

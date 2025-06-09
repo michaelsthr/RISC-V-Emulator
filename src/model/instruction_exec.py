@@ -174,7 +174,7 @@ class InstructionExec:
     def _jal(self, rd: str, imm: str):
         cpi = CPI_VALUES["jal"]
         rd = self._get_register_index(rd)
-        self.cpu.register_set[rd] = Word(dez=self._get_pc())
+        self.cpu.register_set[rd] = Word(dez=self._get_pc() + 1)
 
         imm = self._get_imm(imm)
         self._set_pc(imm)
@@ -243,6 +243,33 @@ class InstructionExec:
         logger.info(
             f"  >> RAM x{self.cpu.ram[base_val + offset].base10} = {self.cpu.register_set[rd].base10}"
         )
+        self._increment_clock(cpi)
+
+    def _slt(self, rd: str, rs1: str, rs2: str):
+        cpi = CPI_VALUES["slt"]
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        rs2 = self._get_register_index(rs2)
+
+        if self.cpu.register_set[rs1] < self.cpu.register_set[rs2]:
+            self.cpu.register_set[rd] = Word(1)
+        else:
+            self.cpu.register_set[rd] = Word(0)
+
+        logger.info(f"  >> x{rd} = {self.cpu.register_set[rd]}")
+        self._increment_pc()
+        self._increment_clock(cpi)
+
+    def _slli(self, rd: str, rs1: str, imm: str):
+        cpi = CPI_VALUES["slt"]
+        rd = self._get_register_index(rd)
+        rs1 = self._get_register_index(rs1)
+        imm = self._get_imm(imm)
+
+        self.cpu.register_set[rd] = self.cpu.register_set[rs1] << Word(dez=imm)
+
+        logger.info(f"  >> x{rd} = {self.cpu.register_set[rd]}")
+        self._increment_pc()
         self._increment_clock(cpi)
 
     def _ecall(self):
