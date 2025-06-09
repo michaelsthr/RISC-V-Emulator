@@ -1,4 +1,4 @@
-7. Iterative Fibonacci-Folge
+# 7. Iterative Fibonacci-Folge
 addi x1, x0, 7        # x1 = n
 addi x2, x0, 0        # x2 = F(0)
 addi x3, x0, 1        # x3 = F(1)

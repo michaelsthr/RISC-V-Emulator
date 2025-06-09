@@ -1,4 +1,4 @@
-6. Summiere Zahlen von 1 bis N
+# 6. Summiere Zahlen von 1 bis N
 addi x1, x0, 10       # x1 = N = 10
 addi x2, x0, 1        # x2 = i = 1
 addi x3, x0, 0        # x3 = Summe = 0

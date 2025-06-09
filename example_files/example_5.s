@@ -1,4 +1,4 @@
-5. Schleife (zähle rückwärts)
+# 5. Schleife (zähle rückwärts)
 addi x1, x0, 5        # x1 = 5 (Zähler)
 
 loop:
