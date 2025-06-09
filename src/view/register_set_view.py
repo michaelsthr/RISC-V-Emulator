@@ -22,6 +22,7 @@ class RegisterSetView(QWidget):
         layout = QVBoxLayout(self)
         label = QLabel("REGISTER SET")
         label.setFont(QFont("PT Mono", 16, QFont.Bold))
+        label.setFixedHeight(40)
         layout.addWidget(label)
 
         self.table = QTableWidget()

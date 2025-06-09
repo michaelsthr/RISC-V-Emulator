@@ -166,7 +166,6 @@ class InstructionExec:
             self._set_pc(imm)
             cpi = CPI_VALUES["bne_taken"]
         else:
-            logger.info(f"{self.cpu.register_set[rs1].base10}, {self.cpu.register_set[rs2].base10}")
             self._increment_pc()
             cpi = CPI_VALUES["bne_not_taken"]
         self._increment_clock(cpi)

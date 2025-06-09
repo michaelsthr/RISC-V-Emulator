@@ -1,7 +1,9 @@
+import time
 import sys
 from typing import Dict
 from colorama import Fore
 from loguru import logger
+from threading import Thread
 
 from .model.cpu import CPU
 from .view.main_window import Window
@@ -28,18 +30,25 @@ class Controller:
         self.window.show()
 
     def _connect_view(self):
-        self.window.run_programm.triggered.connect(self.start_programm)
-        self.window.next_instruction.triggered.connect(self.run_next_instruction)
+        self.window.run_programm.triggered.connect(self.load_programm)
+        self.window.editor.exec_step_button.pressed.connect(self.exec_step)
+        self.window.editor.exec_all_button.pressed.connect(self.exec_all)
 
-    def start_programm(self):
+    def load_programm(self):
         self.cpu.reset()
         self.window.reset()
+        self.window.editor.set_header_buttons_visible(True)
 
         # I know, the nested types are horrendous ...
         # I'm sorry for this :(
         # Either way: load programm to cpu
         # Maps: original_line number and the value
         programm: Dict[int, str] = self.window.get_programm()
+        if all(line.strip() == "" for line in programm.values()):
+            logger.info(f"{Fore.CYAN}Empty program. Nothing to execute.{Fore.RESET}\n"
+                        f"  -> You can load a file, load an example or code your own program :)")
+            self.window.editor.set_header_buttons_visible(False)
+            return
         self.cpu.load_programm(programm)
 
         origin_line_number = self.cpu.get_current_origin_line_number()
@@ -50,7 +59,7 @@ class Controller:
 
         self.update_ui(origin_line_number)
 
-    def run_next_instruction(self): 
+    def exec_step(self): 
         self.cpu.run_next_instruction()
         origin_line_number = self.cpu.get_current_origin_line_number()
 
@@ -59,6 +68,14 @@ class Controller:
             return
 
         self.update_ui(origin_line_number)
+
+    def exec_all(self):
+        origin_line_number = self.cpu.get_current_origin_line_number()
+        while not self.end_reached(origin_line_number):
+            self.cpu.run_next_instruction()
+            origin_line_number = self.cpu.get_current_origin_line_number()
+        
+        self.finish_process()
 
     def end_reached(self, line):
         if line == "END":
@@ -74,7 +91,9 @@ class Controller:
         logger.info(f"  -> PERFORMANCE = {self.cpu.performance}")
         self.window.finish_debug_cursor()
         self.window.update_registers(registers=self.cpu.register_set, ram=self.cpu.ram)
+        self.window.editor.set_header_buttons_visible(False)
 
+    
     def update_ui(self, line_number):
         self.window.move_debug_cursor(line_number=line_number)
         self.window.update_registers(registers=self.cpu.register_set, ram=self.cpu.ram)

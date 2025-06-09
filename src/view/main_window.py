@@ -20,9 +20,8 @@ class Window(QMainWindow):
     WINDOW_TITLE = "RISC-V-Emulator"
     MENU_FILE = "File"
     MENU_OPEN_FILE = "Open File"
-    MENU_EXAMPLES = "Examples"  # New menu name
-    RUN_PROGRAMM = "Run programm"
-    NEXT_INSTRUCTION = "Run instruction"
+    MENU_EXAMPLES = "Examples"
+    RUN_PROGRAMM = "Run and Debug"
 
     def __init__(self):
         super().__init__()
@@ -56,9 +55,6 @@ class Window(QMainWindow):
 
         tool_bar.addSeparator()
 
-        self.next_instruction = QAction(self.NEXT_INSTRUCTION, self)
-        tool_bar.addAction(self.next_instruction)
-
         self.addToolBar(tool_bar)
         self.setMenuBar(menu_bar)
 
@@ -67,16 +63,12 @@ class Window(QMainWindow):
         self.register_set_view = RegisterSetView(register_set=register_set)
         self.ram_view = RAMView(ram=ram)
         self.terminal = Terminal()
-        self.pc_label = Label(heading="PC", init_value=str(0))
-        self.cpi_label = Label(heading="CLOCKS", init_value=str(0))
 
         main_layout = QGridLayout()
         main_layout.addWidget(self.editor, 0, 0)
         main_layout.addWidget(self.terminal, 1, 0)
         main_layout.addWidget(self.register_set_view, 0, 1)
         main_layout.addWidget(self.ram_view, 1, 1)
-        # main_layout.addWidget(self.pc_label, 2, 0)
-        # main_layout.addWidget(self.cpi_label, 2, 1)
 
         main_layout.setColumnStretch(0, 10)
         main_layout.setColumnStretch(1, 8)

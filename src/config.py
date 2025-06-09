@@ -15,7 +15,7 @@ CPI_VALUES = {
     "jal": 2,
     "j": 1,
     "jalr": 2,
-    "slt": 1, 
+    "slt": 1,
     "lui": 1,
     "auipc": 1,
     "lw": 2,
@@ -26,7 +26,6 @@ CPI_VALUES = {
 
 # UNIT: GHZ
 FREQUENCY: float = 4.0
-
 
 EXAMPLE_FILES = [
     "example_1.s",
