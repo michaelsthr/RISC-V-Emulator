@@ -27,6 +27,7 @@ class CPU:
         self.frequency = FREQUENCY
         self.running_time = 0
         self.performance = 0
+        self.avg_cpi = 0
 
         # --obsolete-- > We increment by 4 already
         # I know, the programm counter is normally in the Register
