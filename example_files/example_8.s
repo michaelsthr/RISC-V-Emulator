@@ -1,5 +1,10 @@
-8. Maximum in einem Array finden
-# Array ab Adresse 100, Länge = 5, Ergebnis in x3
+# 8. Maximum in einem Array finden
+#
+# −−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
+# Array liegt ab Adresse 100
+# Laenge = 5 Elemente (4 Byte pro Element )
+# Ergebnis(Maximum) in x3
+# −−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
 
 addi x1, x0, 100      # x1 = Basisadresse des Arrays
 addi x2, x0, 5        # x2 = Anzahl Elemente

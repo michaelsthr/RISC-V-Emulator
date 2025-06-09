@@ -65,3 +65,6 @@ class Editor(QWidget):
 
     def finish_debug_cursor(self):
         self._unhighlight_block()
+
+    def reset(self):
+        self.editor.clear()

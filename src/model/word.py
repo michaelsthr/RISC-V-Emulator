@@ -39,7 +39,7 @@ class Word:
         return self.base10 == word.base10
     
     def __ne__(self, word: "Word") -> bool:
-        return self.base10 == word.base10
+        return self.base10 != word.base10
 
     def set_bit_at_index(self, idx: int, value: str) -> str:
         self.bits[idx] = value

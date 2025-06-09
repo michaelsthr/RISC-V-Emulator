@@ -1,4 +1,4 @@
-9. Funktionsaufruf mit jal / jalr
+# 9. Funktionsaufruf mit jal / jalr
 addi x1, x0, 21       # x1 = 21
 jal  x5, double       # Aufruf, Rücksprungadresse in x5
 j    end              # nach Rückkehr

@@ -43,6 +43,8 @@ class Assembler:
             line = line.strip()
             if re.match(COMMENT_REGEX, line):
                 continue
+            if len(line) == 0 or line == "":
+                continue
             match = re.match(LABEL_REGEX, line)
             if match:
                 line = line.strip()
@@ -68,6 +70,8 @@ class Assembler:
             if re.match(COMMENT_REGEX, line):
                 continue
             if re.match(LABEL_REGEX, line):
+                continue
+            if len(line) == 0 or line == "":
                 continue
             logger.info(f"  BEFORE: {idx}-->{line}")
 

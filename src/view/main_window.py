@@ -2,6 +2,9 @@ from typing import Dict
 from PySide6.QtWidgets import QMainWindow, QWidget, QGridLayout, QMenuBar, QToolBar
 from PySide6.QtGui import QAction
 
+from paths import EXAMPLE_FILES_DIR
+
+from src.config import EXAMPLE_FILES
 from src.model.ram import RAM
 from src.model.register_set import RegisterSet
 
@@ -17,6 +20,7 @@ class Window(QMainWindow):
     WINDOW_TITLE = "RISC-V-Emulator"
     MENU_FILE = "File"
     MENU_OPEN_FILE = "Open File"
+    MENU_EXAMPLES = "Examples"  # New menu name
     RUN_PROGRAMM = "Run programm"
     NEXT_INSTRUCTION = "Run instruction"
 
@@ -33,6 +37,16 @@ class Window(QMainWindow):
         self.load_action = QAction(self.MENU_OPEN_FILE, self)
         file_menu.addAction(self.load_action)
         self.load_action.triggered.connect(self.open_file)
+
+        examples_menu = menu_bar.addMenu(self.MENU_EXAMPLES)
+        for example_file in EXAMPLE_FILES:
+            action = QAction(example_file, self)
+            action.triggered.connect(
+                lambda checked=False, filename=example_file: self._load_example_file(
+                    filename
+                )
+            )
+            examples_menu.addAction(action)
 
         ### Tool Bar ###
         tool_bar = QToolBar(self)
@@ -74,12 +88,20 @@ class Window(QMainWindow):
         self.setCentralWidget(main_widget)
 
     def open_file(self):
-        for line in self.file_loader.import_from_dialog():
-            self.editor.append_html(line)
+        lines = self.file_loader.import_from_dialog()
+        if lines:
+            self.editor.reset()
+            for line in lines:
+                self.editor.append_html(line)
 
     def open_from_filename(self, filename: str):
+        self.editor.reset()  # Reset editor before loading new file
         for line in self.file_loader.read_file(filename):
             self.editor.append_html(line)
+
+    def _load_example_file(self, filename: str):
+        full_path = EXAMPLE_FILES_DIR / filename
+        self.open_from_filename(full_path)
 
     def get_programm(self) -> Dict[int, str]:
         return {idx: line for idx, line in enumerate(self.editor.get_text())}
