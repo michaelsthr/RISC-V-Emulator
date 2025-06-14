@@ -37,4 +37,5 @@ EXAMPLE_FILES = [
     "example_7.s",
     "example_8.s",
     "example_9.s",
+    "answer_to_life.s"
 ]
