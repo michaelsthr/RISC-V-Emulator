@@ -16,7 +16,7 @@ INSTRUCTION_REGEX: str = re.compile(
     r"^\s*"  # Begin, optional space
     r"([a-z]+)"  # Opcode (addi, beq, ...)
     r"\s+"  # Space
-    r"(?:([x]\d+|\d+\([a-zA-Z0-9]+\)|\S+))?"  # 1. operand (optional) - now includes e.g. 0(ra)
+    r"(?:([x]\d+|\d+\([a-zA-Z0-9]+\)|\S+))?"  # 1. operand (optional)
     r"(?:\s*,\s*([x]\d+|\d+\([a-zA-Z0-9]+\)|\S+))?"  # 2. operand (optional)
     r"(?:\s*,\s*([x]\d+|\d+\([a-zA-Z0-9]+\)|\S+))?"  # 3. operand (optional)
     r"\s*(?:#.*)?$"  # comment (optional)

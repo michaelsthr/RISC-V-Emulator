@@ -8,21 +8,48 @@ Follow these steps to set up and run the RISC-V emulator on your machine.
 
 ### Prerequisites
 
-- Python 3.10 or newer
-- pip
+This project is built and tested with **Python 3.12.3**. Verify your Python version:
+
+```bash
+# Check Python version
+python3 --version  # macOS/Linux
+python --version   # Windows
+```
 
 ### Installation
 
+#### 1. Clone the Repository
+
 ```bash
-# Clone the repository
 git clone https://github.com/michaelsthr/RISC-V-Emulator.git
 cd RISC-V-Emulator
+```
 
-# Create and activate a virtual environment
-python3 -m venv venv        # Create virtual environment
-source venv/bin/activate    # Activate (macOS/Linux)
+#### 2. Set Up Virtual Environment
 
-# Install dependencies
+**macOS/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**Windows:**
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+> **Note for Windows users:** If you encounter script execution policy errors, you can either:
+> - Run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` in PowerShell
+> - Or install packages globally without a virtual environment
+
+#### 3. Install Dependencies
+
+```bash
+# macOS/Linux
+pip3 install -r requirements.txt
+
+# Windows
 pip install -r requirements.txt
 ```
 
@@ -63,6 +90,35 @@ python main.py
 | **Branch** | `beq`, `bne` |
 | **Jump and Function** | `j`, `jal`, `jalr` |
 | **Load and Store** | `lw`, `sw` |
+
+### Included features:
+- Implementation of a simple register file (32 registers, including x0)
+- Main memory management (e.g., implemented as an array (ram.py or register_set.py) of **words**)
+- Debug output (step by step or whole run)
+- Memory dump (specific regions in RAM are shown if used)
+- Interactive command line (step-by-step execution)
+- Reading and parsing simple assembly programs as input
+
+### Software Architecture
+
+The RISC-V emulator is structured into several key components:
+- model: Contains the core logic of the emulator, including the CPU and memory management.
+- view: Handles the user interface, displaying the current state of the emulator and allowing user interaction
+- controller: Manages the interaction between the model and view, processing user inputs and updating the model accordingly.
+- Support for additional instructions (lui, auipc, ecall, ebreak)
+- Graphical visualization
+- Performance estimation by assigning a CPI value to each instruction and summing up the required clock cycles for a program
+There is no connection between the model and view, allowing for easy modification of either component without affecting the other.
+
+Importend files: 
+- instruction_executor.py: Contains the logic of all RISC-V instructions.
+- cpu.py: Contains the CPU class, which manages the state of the CPU, including registers and program counter.
+- memory.py: Contains the Memory class, which manages the memory of the emulator.
+- main.py: The entry point of the emulator, initializing the model, view, and controller.
+
+To enhance readabilty, there is a custom word class, which handles every binary word.
+The registers in register_set.py are a list of the word objects. Therefore it is easily possible to just add two words by
+word + word, whitout pay attention of the bin/dez/hex conversasions
 
 
 ### Known bugs:

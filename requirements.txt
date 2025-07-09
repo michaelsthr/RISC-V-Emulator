@@ -1,6 +1,7 @@
 ansi2html==1.9.2
 colorama==0.4.6
 loguru==0.7.3
+pylint==3.2.5
 pyqtdarktheme==0.1.7
 PySide6==6.9.1
 PySide6_Addons==6.9.1

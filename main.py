@@ -10,7 +10,4 @@ if __name__ == "__main__":
 
     controller: Controller = Controller()
 
-    # controller.window.open_from_filename("example_files/example_2.s")
-    # controller.start_programm()
-
     app.exec()
