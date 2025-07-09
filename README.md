@@ -8,7 +8,7 @@ Follow these steps to set up and run the RISC-V emulator on your machine.
 
 ### Prerequisites
 
-This project is built and tested with **Python 3.12.3**. Verify your Python version:
+This project is built and tested with **Python 3.12.2**. Verify your Python version:
 
 ```bash
 # Check Python version
