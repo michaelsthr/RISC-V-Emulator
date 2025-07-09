@@ -120,6 +120,9 @@ To enhance readabilty, there is a custom word class, which handles every binary 
 The registers in register_set.py are a list of the word objects. Therefore it is easily possible to just add two words by
 word + word, whitout pay attention of the bin/dez/hex conversasions
 
+#### Class Diagram
+![](res/RISC-V-Emulator-MVC-ClassDiagramm.png)
+
 
 ### Known bugs:
 - If the editor wraps the text, blocks not parsed well
