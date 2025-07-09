@@ -18,10 +18,12 @@ python --version   # Windows
 
 ### Installation
 
-#### 1. Clone the Repository
+#### 1. Clone the Repository 
 
 ```bash
+# Skip if you already have the repository cloned
 git clone https://github.com/michaelsthr/RISC-V-Emulator.git
+# Navigate into the project directory
 cd RISC-V-Emulator
 ```
 
