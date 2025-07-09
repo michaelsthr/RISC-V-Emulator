@@ -23,6 +23,10 @@ class RegisterSet:
         return self._register_set[key]
 
     def __setitem__(self, key: int, value: Word):
+        if key == 0:
+            # x0 is hardwired to zero in RISC-V, silently ignore writes
+            logger.error("Attempted write to x0 register (hardwired to zero)")
+            return
         self._register_set[key] = value
 
     def __len__(self):
